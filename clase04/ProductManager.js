@@ -12,58 +12,63 @@ class ProductManager{
         this.format = 'utf-8'
     }
 
-    getNextID = async () => {
-        const products = await this.getProducts()
-        const count = products.length;
-        return count > 0 ? products[count-1].id + 1 : 1;
+    read = async () => {
+        if(fs.existsSync(this.path)){
+            return fs.promises.readFile(this.path, this.format).then(r => JSON.parse(r))
+        }
+        return []
+        
     }
 
-    addProduct = async (title, description, price, thumbnail, code, stock) => {
-        const id = await this.getNextID()
-        return this.getProducts()
-        .then(products => {
-            if (products.some(prod => prod.code === code)){
-                return 
-            }
-            products.push({
-                    id: id,
-                    title,
-                    description,
-                    price,
-                    thumbnail,
-                    code,
-                    stock
-                })
-                return products
-            })
-            .then(
-                products => fs.promises.writeFile(this.path, JSON.stringify(products))
-            )
-            .catch(() => console.log('A product with this code already exists'))
-    }    
+    write = async (content) => {
+        return fs.promises.writeFile(this.path, JSON.stringify(content))
+    }
+
+    getNextID = async (list) => {
+        const count = list.length;
+        return count > 0 ? list[count-1].id + 1 : 1;
+    }
+
+    addProduct = async (title, desc, price, thumbnail, code, stock) => {
+        const products = await this.read();
+        const id = await this.getNextID(products);
+        if(products.some(prod => prod.code === code)){
+            return console.log('A product with this code already exists');
+        }
+        const obj = {
+            id,
+            title,
+            desc,
+            price,
+            thumbnail,
+            code,
+            stock
+        }
+        
+        products.push(obj)
+        await this.write(products)
+    }
 
     //Get product list
     getProducts = async () => {
-        return fs.promises.readFile(this.path, this.format)
-            .then(products => JSON.parse(products))
-            .catch(e => {
-                if(e) return []
-            })        
+        const content = await this.read()
+        return content    
         }
 
     getProductByID = async (id) => {
-        const products = await this.getProducts()
+        const products = await this.read()
+        console.log(products);
         const productByID = await products.find(prod => prod.id === id)
         return productByID ?? 'Product not found';
     }
-    updateProduct = async (id, field, newValue) => {
-        const products = await this.getProducts()
-        const update = products.find(prod => prod.id === id)
-        if(update === undefined) return console.log('Product not found')
-        if(update[field] === undefined) return console.log('Field not found')
+    updateProduct = async (id,obj) => {
+        obj.id = id
+        const list = await this.read()
+        const idx = list.findIndex(prod => prod.id === id)
+        if(idx === -1) return 'Product not found'
 
-        update[field] = newValue
-        fs.writeFileSync(this.path, JSON.stringify(products))
+        list[idx] = obj
+        await this.write(list)
 
     }
     deleteProduct = async (id) => {
@@ -74,15 +79,4 @@ class ProductManager{
     }
 }
 
-async function run(){
-    const manager = new ProductManager('products.json');
-    // await manager.addProduct('Zapas', 'descr', 14, 'https://', 32, 64)
-    // await manager.addProduct('Guti', 'descr', 213, 'https://', 16, 64)
-    // await manager.addProduct('Remeras', 'descr', 32, 'https://', 64, 64)
-    // console.log(await manager.getProductByID(2))
-    // await manager.deleteProduct(2)
-    // await manager.updateProduct(2, 'title', 'Remeras')
-    // console.log(await manager.getProducts());
-
-}
-run()
+module.exports = ProductManager
