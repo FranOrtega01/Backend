@@ -1,0 +1,94 @@
+[
+    {
+        "title": "Remera de boca",
+        "description": "Argentina campeon carajo",
+        "code": "1812",
+        "price": 2022,
+        "status": true,
+        "stock": 3,
+        "category": "ropa",
+        "thumbnail": [
+            "https//:asdfasdf",
+            "htyhashh"
+        ],
+        "id": 1
+    },
+    {
+        "title": "Botines de boca",
+        "description": "Quiero ganar la tercera",
+        "code": "2022",
+        "price": 2022,
+        "status": true,
+        "stock": 78,
+        "category": "ropa",
+        "thumbnail": [
+            "https//:asdfasdf",
+            "htyhashh"
+        ],
+        "id": 2
+    },
+    {
+        "title": "Short de boca",
+        "description": "Messi",
+        "code": "8080",
+        "price": 2022,
+        "status": true,
+        "stock": 78,
+        "category": "ropa",
+        "thumbnail": [
+            "https//:asdfasdf",
+            "htyhashh"
+        ],
+        "id": 3
+    },
+    {
+        "title": "Pelota de boca",
+        "description": "alksasg",
+        "code": "8180",
+        "price": 2022,
+        "status": true,
+        "stock": 78,
+        "category": "ropa",
+        "thumbnail": [
+            "https//:asdfasdf",
+            "htyhashh"
+        ],
+        "id": 4
+    },
+    {
+        "title": "Carpeta de Boca",
+        "description": "alksasg",
+        "code": "81230",
+        "price": 2022,
+        "status": true,
+        "stock": 78,
+        "category": "ropa",
+        "thumbnail": [
+            "https//:asdfasdf",
+            "htyhashh"
+        ],
+        "id": 5
+    },
+    {
+        "title": "Carpeta de Boca",
+        "description": "alksasg",
+        "code": "830",
+        "price": 2022,
+        "status": true,
+        "stock": 78,
+        "category": "ropa",
+        "thumbnail": [],
+        "id": 6
+    },
+    {
+        "title": "Medias de Boca",
+        "description": "alksasg",
+        "code": "8901",
+        "price": 2022,
+        "stock": 78,
+        "category": "ropa",
+        "thumbnail": [],
+        "id": 7,
+        "status": true
+    }
+]
