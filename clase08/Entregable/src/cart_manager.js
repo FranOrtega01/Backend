@@ -47,23 +47,7 @@ class CartManager{
     addProduct = async (cartID, productID) => {
         const cart = await this.getByID(cartID)
         const products = await this.readProducts()
-
-        //CODIGO AFTER
-        // let found = false
-        // for (let i = 0; i < cart.products.length; i++){
-        //     if(cart.products[i].id == productID){
-        //         cart.products[i].quantity++
-        //         found = true
-        //         break
-        //     }
-        // }
-        // if (!found){
-        //     cart.products.push({
-        //         id:productID,
-        //         quantity:1
-        //     })
-        // }
-
+        
         //Throw error if product with given ID doesnt exist
         if(!products.some(prod => prod.id === productID)) return -1
 

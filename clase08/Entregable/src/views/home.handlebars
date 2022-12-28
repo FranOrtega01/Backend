@@ -1,0 +1,24 @@
+<h1 class="display-5 text-center">Productos disponibles</h1>
+<br>
+<table class="table table-dark table-striped table-hover">
+    <tr>
+        <td><strong>ID</strong></td>
+        <td><strong>Producto</strong></td>
+        <td><strong>Descripción</strong></td>
+        <td><strong>Precio</strong></td>
+        <td><strong>Código</strong></td>
+        <td><strong>Stock</strong></td>
+        <td><strong>Categoría</strong></td>
+    </tr>
+    {{#each products}}
+    <tr>
+        <td>{{this.id}}</td>
+        <td>{{this.title}}</td>
+        <td>{{this.description}}</td>
+        <td>${{this.price}}</td>
+        <td>{{this.code}}</td>
+        <td>{{this.stock}}</td>
+        <td>{{this.category}}</td>
+    </tr>
+    {{/each}}  
+</table>
