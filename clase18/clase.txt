@@ -1,0 +1,12 @@
+Clase18 - Mongo Avanzado II
+
+~ Aggregation:
+
+    - Agrupar documentos con base en un criterio especifico.
+    - Hacer una operacion sobre esos docs para obtener un solo resultado.
+    - Analizar cambios de info con el paso del tiempo.
+ 
+
+~ Paginate:
+
+    - mongoose-paginate-v2 (libreria)
