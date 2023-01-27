@@ -1,0 +1,18 @@
+<div>
+    <h1>Hola, {{ user.name }} {{user.lastname }}, Welcome to the jungle!</h1>
+
+    {{#if isAdmin }}
+        <p> Lista:</p>
+        {{#each foods}}
+        <div style="display: flex;">
+            <p>{{this.name}}</p>
+            <p><b> {{this.price}} </b></p>
+        </div>
+        {{/each}}
+    {{else }}
+        <p>No tienes permiso para ver la lista</p>
+    {{/if }}
+</div>
+
+<script src="/js/index.js"></script>
+
