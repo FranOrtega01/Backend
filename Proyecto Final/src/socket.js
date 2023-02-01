@@ -3,6 +3,7 @@ import productRouter from './routes/products.router.js'
 import cartRouter from './routes/cart.router.js'
 import chatRouter from './routes/chat.router.js'
 import productViewRouter from './routes/products.view.router.js'
+import cartViewRouter from './routes/cart.view.router.js'
 
 
 const socket = (io, app) => {
@@ -17,6 +18,7 @@ const socket = (io, app) => {
     })
 
     app.use('/products', productViewRouter)
+    app.use('/cart', cartViewRouter )
     app.use('/api/products', productRouter)
     app.use('/api/carts', cartRouter)
     app.use('/chat', chatRouter)

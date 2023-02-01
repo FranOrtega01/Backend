@@ -34,8 +34,13 @@ router.get('/', async (req,res) => {
         search.title = filter
     }
     
-    const data = await productModel.paginate(search, options)
 
+    if(sort){
+        if(sort === 'asc') options.sort = {'price': 1}
+        if(sort === 'desc') options.sort = {'price': -1}
+    }
+
+    const data = await productModel.paginate(search, options)
 
     res.render('home', data)
 })
