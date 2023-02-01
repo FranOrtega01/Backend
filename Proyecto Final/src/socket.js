@@ -2,6 +2,7 @@ import messageModel from "./dao/models/message.model.js";
 import productRouter from './routes/products.router.js'
 import cartRouter from './routes/cart.router.js'
 import chatRouter from './routes/chat.router.js'
+import productViewRouter from './routes/products.view.router.js'
 
 
 const socket = (io, app) => {
@@ -14,6 +15,8 @@ const socket = (io, app) => {
     app.get('/', (req, res) => {
         res.send('Work great!')
     })
+
+    app.use('/products', productViewRouter)
     app.use('/api/products', productRouter)
     app.use('/api/carts', cartRouter)
     app.use('/chat', chatRouter)

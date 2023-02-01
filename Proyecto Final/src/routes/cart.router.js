@@ -57,9 +57,48 @@ router.post("/:cid/product/:pid", async (req, res) => {
     res.json({status: "Success", cart})
 })
 
+// Update cart by ID 
+
+router.put('/:cid', async (req,res) => {
+    const id = req.params.cid
+    const cart = await cartModel.findById(id)
+
+
+    cart.products = req.body
+
+    cart.save()
+
+    res.json({status: "Success", cart})
+
+})
+
+// Update cart product quantity by prod ID
+
+router.put("/:cid/product/:pid", async (req, res) => {
+    const cartID = req.params.cid
+    const productID = req.params.pid
+    const cart = await cartModel.findById(cartID)
+    if(!cart) return res.status(404).json({status: 'Error', error: 'Product not found'})
+
+    //Toma la nueva cantidad pasada por req.body
+    const newQuantity = req.body
+
+    const Idx = cart.products.findIndex(({id}) => id == productID)
+    
+    if(Idx === -1) return res.status(404).json({status: 'Error', error: 'Product not found'}) 
+
+    //Reemplaza el quantity anterior por el nuevo
+    cart.products[Idx].quantity = newQuantity.quantity
+
+    await cart.save()
+
+    res.json({status: "Success", cart})
+})
+
+
 // Delete cart by ID
-router.delete('/:id', async (req,res) => {
-    const id = req.params.id
+router.delete('/:cid', async (req,res) => {
+    const id = req.params.cid
     const deleted = await cartModel.deleteOne({_id: id})
     
     res.json({
@@ -67,6 +106,27 @@ router.delete('/:id', async (req,res) => {
         massage: "Cart deleted",
         deleted
     })
+})
+
+
+// Delete cart product by ID
+router.delete("/:cid/product/:pid", async (req, res) => {
+    const cartID = req.params.cid
+    const productID = req.params.pid
+    const cart = await cartModel.findById(cartID)
+    if(!cart) return res.status(404).json({status: 'Error', error: 'Product not found'})
+
+
+    const Idx = cart.products.findIndex(({id}) => id == productID)
+    console.log(Idx);
+    
+    Idx === -1 ? 
+    res.status(404).json({status: 'Error', error: 'Product not found'}) :
+    cart.products.splice(Idx, 1)
+
+    await cart.save()
+
+    res.json({status: "Success", cart})
 })
 
 export default router
