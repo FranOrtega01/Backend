@@ -13,11 +13,11 @@ router.get('/', async (req, res) => {
 router.get('/:id', async (req, res) => {
     const id = (req.params.id)
     try {
-        const data = await cartModel.findOne({_id: id})
+        const data = await cartModel.findOne({_id: id}).populate('products.id')
         console.log(data);
         res.render('cart', data)
 
-        
+
     } catch (error) {
         console.log(error);
         res.json({

@@ -5,21 +5,13 @@
     <tr>
         <td><strong>ID</strong></td>
         <td><strong>Producto</strong></td>
-        <td><strong>Descripción</strong></td>
-        <td><strong>Precio</strong></td>
-        <td><strong>Código</strong></td>
-        <td><strong>Stock</strong></td>
-        <td><strong>Categoría</strong></td>
+        <td><strong>Quantity</strong></td>
     </tr>
-    {{#each docs}}
+    {{#each data.products}}
     <tr>
-        {{!-- <td>{{this.id}}</td>
+        <td>{{this._id}}</td> 
         <td>{{this.title}}</td>
-        <td>{{this.description}}</td>
-        <td>${{this.price}}</td>
-        <td>{{this.code}}</td>
-        <td>{{this.stock}}</td>
-        <td>{{this.category}}</td> --}}
+        <td>{{this.quantity}}</td>
     </tr>
     {{/each}}  
 </table>

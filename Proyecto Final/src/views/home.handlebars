@@ -1,24 +1,26 @@
 <h1 class="display-5 text-center">Productos disponibles</h1>
 <br>
-<table class="table table-dark table-striped table-hover">
-    <tr>
-        <td><strong>ID</strong></td>
-        <td><strong>Producto</strong></td>
-        <td><strong>Descripción</strong></td>
-        <td><strong>Precio</strong></td>
-        <td><strong>Código</strong></td>
-        <td><strong>Stock</strong></td>
-        <td><strong>Categoría</strong></td>
-    </tr>
-    {{#each docs}}
-    <tr>
-        <td>{{this.id}}</td>
-        <td>{{this.title}}</td>
-        <td>{{this.description}}</td>
-        <td>${{this.price}}</td>
-        <td>{{this.code}}</td>
-        <td>{{this.stock}}</td>
-        <td>{{this.category}}</td>
-    </tr>
-    {{/each}}  
-</table>
+
+    <div class="row">
+        {{#each docs}}
+        <div class="card m-2" style="width: 18rem;">
+            <div class="card-body">
+                <h5 class="card-title">{{this.title}}</h5>
+                <h6 class="card-subtitle mb-2 text-muted">{{this.description}}</h6>
+                <p class="card-text">${{this.price}}</p>
+                <a href="/products/{{this._id}}" class="card-link">Leer más</a>
+                <a href="#" class="card-link">Agregar al carrito</a>
+            </div>
+        </div>
+        {{/each}}
+    </div>
+
+    <div>
+        {{#if hasPrevPage}}
+            <a href="{{prevLink}}" style="border: 1px solid black; border-radius:4px; padding:4px">{{prevPage}}</a>
+        {{/if}}
+        Página <b>{{page}}</b>
+        {{#if hasNextPage}}
+            <a href="{{nextLink}}" style="border: 1px solid black; border-radius:4px; padding:4px">{{nextPage}}</a>
+        {{/if}}
+    </div>

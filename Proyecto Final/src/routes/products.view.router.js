@@ -16,7 +16,7 @@ router.get('/realTimeProducts', async (req, res) => {
 
 // Listar products
 router.get('/', async (req,res) => {
-    const limit = req.query?.limit || 10
+    const limit = req.query?.limit || 2
     const page = req.query?.page || 1
     const filter = req.query?.query || ''
     const sort = req.query.sort
@@ -39,8 +39,11 @@ router.get('/', async (req,res) => {
         if(sort === 'asc') options.sort = {'price': 1}
         if(sort === 'desc') options.sort = {'price': -1}
     }
-
+    
     const data = await productModel.paginate(search, options)
+
+    data.prevLink = data.hasPrevPage ? `/products?page=${data.prevPage}` : null
+    data.nextLink = data.hasNextPage ? `/products?page=${data.nextPage}` : null
 
     res.render('home', data)
 })
@@ -51,7 +54,7 @@ router.get("/:id", async (req, res) => {
 
     try {
         const product = await productModel.findOne({_id: id})
-        res.json({product})
+        res.render('prodDetail', product)
     } catch (error) {
         console.log(error);
         res.json({

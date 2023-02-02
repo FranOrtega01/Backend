@@ -13,7 +13,8 @@ router.get('/', async (req, res) => {
 router.get('/:id', async (req, res) => {
     const id = (req.params.id)
     try {
-        const cart = await cartModel.findOne({_id: id})
+        const cart = await cartModel.findOne({_id: id}).populate('products.id')
+        console.log(cart);
         res.json({cart})
     } catch (error) {
         console.log(error);
@@ -25,7 +26,7 @@ router.get('/:id', async (req, res) => {
 })
 
 // Create new cart
-router.post('/', async (req,res) => {
+router.post('/', async (req ,res) => {
     const newCart = await cartModel.create({})
     res.json({status:'Success', newCart})
 })

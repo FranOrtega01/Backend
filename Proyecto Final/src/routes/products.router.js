@@ -15,16 +15,65 @@ const router = Router()
 // })
 
 // Listar products
+// router.get('/', async (req,res) => {
+//     const products = await productModel.paginate(search, options)
+
+//     res.json({products})
+//     // res.render('home', { products })
+// })
+
+
+// Listar products
 router.get('/', async (req,res) => {
-    const products = await productModel.find().lean().exec()
-    const limit = req.query.limit
+    const limit = req.query?.limit || 10
+    const page = req.query?.page || 1
+    const filter = req.query?.query || ''
+    const sort = req.query.sort
+    
 
-    //Si existe limit, limitar los productos al numero dado
+    const options = {
+        limit,
+        page,
+        lean:true,
+    }
 
-    if (limit) products.splice(limit, products.length)
+    const search = {}
 
-    res.json({products})
-    // res.render('home', { products })
+    if(filter)  search.title = filter
+    
+
+    if(sort){
+        if(sort === 'asc') options.sort = {'price': 1}
+        if(sort === 'desc') options.sort = {'price': -1}
+    }
+
+
+    try {
+
+        const data = await productModel.paginate(search, options)
+    
+        data.prevLink = data.hasPrevPage ? `/api/products?page=${data.prevPage}` : null
+        data.nextLink = data.hasNextPage ? `/api/products?page=${data.nextPage}` : null
+    
+        // console.log(JSON.stringify(data, null, "\t"));
+    
+        res.json({
+            status: 'success',
+            payload: data.docs,
+            totalDocs: data.totalDocs,
+            limit: data.limit,
+            totalPages: data.totalPages,
+            prevPage: data.prevPage,
+            nextPage: data.nextPage,
+            hasPrevPage: data.hasPrevPage,
+            hasNextPage: data.hasNextPage,
+            prevLink: data.prevLink,
+            nextLink:data.nextLink
+        })
+
+    } catch (error) {
+        res.send({status: 'error', error})
+    }
 })
 
 // Get por id
