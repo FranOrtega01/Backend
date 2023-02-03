@@ -15,8 +15,6 @@ router.get('/users', async (req, res) => {
     result.prevLink = result.hasPrevPage ? `/users?page=${result.prevPage}` : ''
     result.nextLink = result.hasNextPage ? `/users?page=${result.nextPage}` : ''
 
-
-
     res.render('users', result)
 })
 
