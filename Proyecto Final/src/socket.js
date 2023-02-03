@@ -4,7 +4,7 @@ import cartRouter from './routes/cart.router.js'
 import chatRouter from './routes/chat.router.js'
 import productViewRouter from './routes/products.view.router.js'
 import cartViewRouter from './routes/cart.view.router.js'
-
+import sessionRouter from './routes/session.router.js'
 
 const socket = (io, app) => {
     app.use((req, res, next) => {
@@ -22,7 +22,7 @@ const socket = (io, app) => {
     app.use('/api/products', productRouter)
     app.use('/api/carts', cartRouter)
     app.use('/chat', chatRouter)
-
+    app.use('/session', sessionRouter)
 
 
     io.on("connection", async socket => {

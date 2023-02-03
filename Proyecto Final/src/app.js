@@ -6,6 +6,11 @@ import __dirname from './utils.js';
 import mongoose from "mongoose";
 import socket from './socket.js';
 
+import session from 'express-session';
+import MongoStore from 'connect-mongo';
+import passport from 'passport';
+import initializePassport from './config/passport.config.js';
+
 // Init Servers
 const app = express()
 app.use(express.json())
@@ -21,12 +26,33 @@ app.use(express.json())
 app.use(express.static(__dirname + '/public'))
 
 
+
+
 // Config DB
 const uri = "mongodb+srv://FranOrtega:elsapopepe.CODERHOUSE@clustertester.b9tsw8l.mongodb.net/?retryWrites=true&w=majority"
-mongoose.set('strictQuery', false)
+
+const DBname = 'ecommerce'
+
+// Config Session
+app.use(session({
+    store: MongoStore.create({
+        mongoUrl: uri,
+        dbName: DBname
+        
+    }),
+    secret:'mysecret',
+    resave: true,
+    saveUnitialized: true
+    
+}))
+initializePassport()
+app.use(passport.initialize())
+app.use(passport.session())
 
 // Server + DB setup
-mongoose.connect(uri,{dbName: "ecommerce"}, error => {
+mongoose.set('strictQuery', false)
+
+mongoose.connect(uri,{dbName: DBname}, error => {
     if(error){
         console.log(error);
         console.log('Couldnt connect to DB');
