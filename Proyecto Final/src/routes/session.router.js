@@ -11,20 +11,15 @@ router.get('/register', (req, res) => {
 })
 
 // API para crear usuarios
+    // Si el register falla, redirecciona a failRegister
 router.post('/register', passport.authenticate('register', {failureRedirect: '/session/failRegister'}), async (req, res) => {
-    const userNew = {
-        first_name: req.body.first_name,
-        last_name: req.body.last_name,
-        email: req.body.email,
-        age: req.body.age,
-        password: createHash(req.body.password)
-    }
-    console.log(userNew);
-
-    const user = new UserModel(userNew)
-    await user.save()
-
+    
     res.redirect('/session/login')
+})
+
+router.get('/failRegister', (req, res) => {
+    console.log('Fail Strategy');
+    res.send({error: 'Failed'})
 })
 
 // View LogIn
@@ -33,34 +28,26 @@ router.get('/login', (req, res) => {
 })
 
 // API LogIn
-router.post('/login', async (req,res) => {
-    const { email, password } = req.body
+router.post('/login', passport.authenticate('login', {failureRedirect: '/session/failLogin'}), async (req,res) => {
 
-    try {
-        const user = await UserModel.findOne({email}).lean().exec()
-    
-        if(!user){
-            return res.status(401).render('errors/base', {
-                error: 'User not found'
-            })
-        }
-    
-        if(!isValidPassword(user, password)){
-            return res.status(403).send({status: 'error', error: 'Incorrect Password'})
-        }
-    
-        delete user.passowrd
-    
-        req.session.user = user
-    
-        res.redirect('/products')
-        
-    } catch (error) {
-        res.json({status: 'error', error})
+    if(!req.user){
+        return res.status(400).send({status:'error', error: 'Invalid Credentials'})
     }
 
+    req.session.user = {
+        first_name: req.body.first_name,
+        last_name: req.body.last_name,
+        email: req.body.email,
+        age: req.body.age
+    }
+
+    res.redirect('/products')
 })
 
+router.get('/failLogin', (req, res) => {
+    console.log('Fail Strategy');
+    res.send({error: 'Failed'})
+})
 
 router.get('/profile', (req, res) => {
     res.json(req.session.user)

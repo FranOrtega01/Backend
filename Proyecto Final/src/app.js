@@ -45,6 +45,7 @@ app.use(session({
     saveUnitialized: true
     
 }))
+// Inicializa Middlewares de Passport
 initializePassport()
 app.use(passport.initialize())
 app.use(passport.session())
