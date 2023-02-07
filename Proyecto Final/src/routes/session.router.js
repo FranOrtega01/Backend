@@ -1,10 +1,15 @@
 import { Router } from "express";
-import UserModel from "../dao/models/user.model.js";
-import { createHash, isValidPassword } from "../utils.js";
 import passport from 'passport'
 const router = Router();
 
 // View para register 
+
+function auth(req, res, next){
+    if(req.session?.user){
+        return next()
+    }
+    return res.status(401).send('Error de autorización')
+}
 
 router.get('/register', (req, res) => {
     res.render('sessions/register')
@@ -35,11 +40,13 @@ router.post('/login', passport.authenticate('login', {failureRedirect: '/session
     }
 
     req.session.user = {
-        first_name: req.body.first_name,
-        last_name: req.body.last_name,
-        email: req.body.email,
-        age: req.body.age
+        first_name: req.user.first_name,
+        last_name: req.user.last_name,
+        email: req.user.email,
+        age: req.user.age,
+        rol: req.user.rol
     }
+    console.log(req.session.user);
 
     res.redirect('/products')
 })
@@ -49,8 +56,9 @@ router.get('/failLogin', (req, res) => {
     res.send({error: 'Failed'})
 })
 
-router.get('/profile', (req, res) => {
-    res.json(req.session.user)
+router.get('/profile',auth, (req, res) => {
+
+    res.render('sessions/profile', { user: req.session.user})
 })
 
 
@@ -59,11 +67,9 @@ router.get('/logout', (req, res) => {
     req.session.destroy(err => {
         if(err){
             console.log(err);
-            res.status(500). render('errors/base', {error: err})
+            return res.status(500). render('errors/base', {error: err})
         }
-        else{
-            res.redirect('/session/login')
-        }
+        res.redirect('/session/login')
     })
 })
 

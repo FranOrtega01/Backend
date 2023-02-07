@@ -1,8 +1,8 @@
-<h1 class="display-5 text-center">Productos disponibles</h1>
+<h1 class="display-5 text-center">Bienvenido, {{user.first_name}}</h1>
 <br>
 
     <div class="row">
-        {{#each docs}}
+        {{#each data.docs}}
         <div class="card m-2" style="width: 18rem;">
             <div class="card-body">
                 <h5 class="card-title">{{this.title}}</h5>
@@ -16,11 +16,13 @@
     </div>
 
     <div>
-        {{#if hasPrevPage}}
-            <a href="{{prevLink}}" style="border: 1px solid black; border-radius:4px; padding:4px">{{prevPage}}</a>
+        {{#if data.hasPrevPage}}
+            <a href="{{data.prevLink}}" style="border: 1px solid black; border-radius:4px; padding:4px">{{data.prevPage}}</a>
         {{/if}}
-        Página <b>{{page}}</b>
-        {{#if hasNextPage}}
-            <a href="{{nextLink}}" style="border: 1px solid black; border-radius:4px; padding:4px">{{nextPage}}</a>
+        Página <b>{{data.page}}</b>
+        {{#if data.hasNextPage}}
+            <a href="{{data.nextLink}}" style="border: 1px solid black; border-radius:4px; padding:4px">{{data.nextPage}}</a>
         {{/if}}
     </div>
+
+    <a href="/session/profile">Mi Perfil</a>

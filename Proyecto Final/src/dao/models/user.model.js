@@ -10,7 +10,11 @@ const userSchema = new mongoose.Schema({
         unique: true
     },
     age: Number,
-    password: String
+    password: String,
+    rol:{
+        type: String,
+        default: 'user'
+    }
     
 });
 

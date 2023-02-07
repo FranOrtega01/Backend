@@ -45,7 +45,9 @@ router.get('/', async (req,res) => {
     data.prevLink = data.hasPrevPage ? `/products?page=${data.prevPage}` : null
     data.nextLink = data.hasNextPage ? `/products?page=${data.nextPage}` : null
 
-    res.render('home', data)
+    const user = req.session.user
+    
+    res.render('home', {data, user})
 })
 
 // Get por id

@@ -14,7 +14,7 @@ const socket = (io, app) => {
 
     // Config de rutas
     app.get('/', (req, res) => {
-        res.send('Work great!')
+        res.redirect('/session/login')
     })
 
     app.use('/products', productViewRouter)
