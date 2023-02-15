@@ -12,7 +12,7 @@ function auth(req, res, next){
 }
 
 router.get('/register', (req, res) => {
-    res.render('sessions/register')
+    res.render('sessions/register' , {title: 'Register'})
 })
 
 // API para crear usuarios
@@ -29,7 +29,7 @@ router.get('/failRegister', (req, res) => {
 
 // View LogIn
 router.get('/login', (req, res) => {
-    res.render('sessions/login')
+    res.render('sessions/login', {title: 'Login'})
 })
 
 // API LogIn
@@ -73,5 +73,46 @@ router.get('/logout', (req, res) => {
     })
 })
 
+// Login Github
 
+router.get('/github', 
+    passport.authenticate('github', {scope:['user:email']}),
+    async(req, res) => {}
+)
+
+router.get('/githubcallback',
+    passport.authenticate('github', {failureRedirect: '/login'}),
+    async(req, res) => {
+        console.log('Callback', req.user);
+
+        req.session.user = req.user
+
+        console.log('User Session:', req.session.user);
+
+        res.redirect('/products')
+    }
+    
+)
+
+// Login Google
+
+router.get('/google', 
+    passport.authenticate('google', 
+    {scope:['email', 'profile']}),
+    async(req, res) => {}
+)
+
+router.get('/googlecallback',
+    passport.authenticate('google', {failureRedirect: '/login'}),
+    async(req, res) => {
+        console.log('Callback', req.user);
+
+        req.session.user = req.user
+
+        console.log('User Session:', req.session.user);
+
+        res.redirect('/products')
+    }
+    
+)
 export default router

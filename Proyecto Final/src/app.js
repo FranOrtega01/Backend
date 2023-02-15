@@ -1,3 +1,4 @@
+
 import express from 'express'
 import handlebars from 'express-handlebars'
 import { Server }  from 'socket.io'
@@ -10,6 +11,10 @@ import session from 'express-session';
 import MongoStore from 'connect-mongo';
 import passport from 'passport';
 import initializePassport from './config/passport.config.js';
+
+import dotenv from 'dotenv';
+dotenv.config();
+
 
 // Init Servers
 const app = express()
@@ -25,11 +30,11 @@ app.set('view engine', 'handlebars')
 app.use(express.json())
 app.use(express.static(__dirname + '/public'))
 
-
+// console.log();
 
 
 // Config DB
-const uri = "mongodb+srv://FranOrtega:elsapopepe.CODERHOUSE@clustertester.b9tsw8l.mongodb.net/?retryWrites=true&w=majority"
+const uri = `mongodb+srv://FranOrtega:${process.env.MONGO_PASSWORD}@clustertester.b9tsw8l.mongodb.net/?retryWrites=true&w=majority`
 
 const DBname = 'ecommerce'
 

@@ -1,13 +1,27 @@
-<h1>Registrar Usuarios</h1>
+<h1>Crear cuenta</h1>
 
-<form action="/session/register" method="post"> <br>
-    First Name: <input type="text" name="first_name"><br>
-    Last Name: <input type="text" name="last_name"><br>
-    Email: <input type="email" name="email"><br>
-    Age: <input type="number" name="age"><br>
-    Password: <input type="password" name="password"><br>
-    <br>
-    <input type="submit" value="Crear">
-</form>
-
-<p> Ya tienes una cuenta? <a href="/session/login">Ingresa</a></p>
+<div class="card p-3" style="width: 22rem;">
+    <form action="/session/register" method="post">
+    <div class="form-group my-2">
+            <label for="first_name">First name</label>
+            <input type="text" class="form-control" id="first_name" name="first_name" aria-describedby="emailHelp" placeholder="Enter first name">
+        </div><div class="form-group my-2">
+            <label for="last_name">Last name</label>
+            <input type="text" class="form-control" id="last_name" name="last_name" aria-describedby="emailHelp" placeholder="Enter last name">
+        </div>
+        <div class="form-group my-2">
+            <label for="email">Email</label>
+            <input type="email" class="form-control" id="email" name="email" aria-describedby="emailHelp" placeholder="Enter email">
+        </div>
+        <div class="form-group my-2">
+            <label for="age">Edad</label>
+            <input type="number" min="1" max="99" class="form-control" id="age" name="age" aria-describedby="emailHelp" placeholder="Enter age">
+        </div>
+        <div class="form-group my-2">
+            <label for="password">Contraseña</label>
+            <input type="password" class="form-control" id="password" name="password" placeholder="Password">
+        </div>
+        <button type="submit" class="btn btn-primary my-3">Crear cuenta</button>
+    </form>
+    <p>¿Ya tienes una cuenta? <a href="/session/login">Ingresa</a></p>
+</div>

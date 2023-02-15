@@ -1,7 +1,12 @@
 import passport from 'passport'
 import local from 'passport-local'
 import UserModel from '../dao/models/user.model.js';
+import GithubStrategy from 'passport-github2'
+import GoogleStrategy from 'passport-google-oidc'
 import { createHash, isValidPassword} from "../utils.js";
+
+import dotenv  from "dotenv"
+dotenv.config()
 
 //Passport (Local) - mejora la arquitectura y estructura generando estrategias de auth y autorizacion, dejando el codigo mas limpio
 
@@ -30,7 +35,7 @@ const initializePassport = () => {
 
             // Handle roles
             //Cambiar
-            if(email == 'adminCoder@coder.com' && password == 'adminCod3r123') rol = 'admin'
+            if(email == process.env.ADMIN_EMAIL && password == process.env.ADMIN_PASSWORD) rol = 'admin'
 
             // Crea el user con el hash
             const newUser = { 
@@ -74,6 +79,62 @@ const initializePassport = () => {
         }
     }))
 
+    //Estrategia para login con GitHub
+    passport.use('github', new GithubStrategy({
+        clientID: process.env.GITHUB_CLIENT_ID,
+        clientSecret: process.env.GITHUB_APP_KEY,
+        callbackURL: 'http://127.0.0.1:8080/session/githubcallback'
+    }, async (accesToken, refreshToken, profile, done) => {
+        console.log(profile);
+
+        try {
+            const user = await UserModel.findOne({email: profile._json.email})
+
+            if(user) return done(null, user)
+
+            const newUser = await UserModel.create({
+                first_name: profile._json.name,
+                last_name: '',
+                email: profile._json.email,
+                password: ''
+            })
+
+
+            return done(null, newUser)
+
+        } catch (error) {
+            return done('Error to login with GitHub' + error)
+        }
+    }
+    ))
+
+
+    passport.use('google', new GoogleStrategy({
+        clientID: process.env.GOOGLE_CLIENT_ID,
+        clientSecret: process.env.GOOGLE_APP_KEY,
+        callbackURL: 'http://127.0.0.1:8080/session/googlecallback'
+    }, async (accesToken, refreshToken, profile, done) => {
+        // const { name, emails} = profile
+        console.log(profile);
+        try {
+            const user = await UserModel.findOne({email: profile.emails[0].value})
+
+            if(user) return done(null, user)
+
+            const newUser = await UserModel.create({
+                first_name: profile.name.givenName,
+                last_name:  profile.name.familyName,
+                email: profile.emails[0].value,
+                password: ''
+            })
+
+            return done(null, newUser)
+
+        } catch (error) {
+            return done('Error to login with Google' + error)
+        }
+    }
+    ))
 
     passport.serializeUser((user, done) => {
         done(null, user._id)
