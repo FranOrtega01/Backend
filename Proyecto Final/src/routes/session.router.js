@@ -2,6 +2,9 @@ import { Router } from "express";
 import passport from 'passport'
 const router = Router();
 
+import dotenv from 'dotenv';
+dotenv.config();
+
 // View para register 
 
 function auth(req, res, next){
@@ -48,7 +51,7 @@ router.post('/login', passport.authenticate('login', {failureRedirect: '/session
     }
     console.log(req.session.user);
 
-    res.redirect('/products')
+    res.cookie(env.process.COOKIE_NAME, res.user.token).res.redirect('/products')
 })
 
 router.get('/failLogin', (req, res) => {
@@ -67,7 +70,7 @@ router.get('/logout', (req, res) => {
     req.session.destroy(err => {
         if(err){
             console.log(err);
-            return res.status(500). render('errors/base', {error: err})
+            return res.status(500).render('errors/base', {error: err})
         }
         res.redirect('/session/login')
     })

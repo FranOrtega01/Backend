@@ -5,6 +5,7 @@ import chatRouter from './routes/chat.router.js'
 import productViewRouter from './routes/products.view.router.js'
 import cartViewRouter from './routes/cart.view.router.js'
 import sessionRouter from './routes/session.router.js'
+import { passportCall } from "./utils.js";
 
 const socket = (io, app) => {
     app.use((req, res, next) => {
@@ -17,7 +18,7 @@ const socket = (io, app) => {
         res.redirect('/session/login')
     })
 
-    app.use('/products', productViewRouter)
+    app.use('/products', passportCall('jwt'), productViewRouter)
     app.use('/cart', cartViewRouter )
     app.use('/api/products', productRouter)
     app.use('/api/carts', cartRouter)

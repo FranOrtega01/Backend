@@ -70,8 +70,9 @@ export default class MyRouter{
 
             const tokenArray = authHeaders.split(" ")
             const token = tokenArray.length > 1 ? tokenArray[1] : tokenArray[0]
-console.log(token);
+            console.log(token);
             const user = jwt.verify(token, 'secret')
+            
             if(!policies.includes(user.role.toUpperCase())) return res.sendNotAuthorizedError('Unauthorized')
 
             req.user = user;

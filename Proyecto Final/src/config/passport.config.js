@@ -1,16 +1,20 @@
 import passport from 'passport'
 import local from 'passport-local'
+import jwt from 'passport-jwt'
 import UserModel from '../dao/models/user.model.js';
 import GithubStrategy from 'passport-github2'
 import GoogleStrategy from 'passport-google-oidc'
-import { createHash, isValidPassword} from "../utils.js";
+import { createHash, isValidPassword, generateToken, extractCookie} from "../utils.js";
 
-import dotenv  from "dotenv"
+import dotenv from "dotenv"
 dotenv.config()
 
 //Passport (Local) - mejora la arquitectura y estructura generando estrategias de auth y autorizacion, dejando el codigo mas limpio
 
 const LocalStrategy = local.Strategy
+const JWTStrategy = jwt.Strategy
+const JWTExtract = jwt.ExtractJwt
+
 
 const initializePassport = () => {
     //Estrategia para register
@@ -73,12 +77,23 @@ const initializePassport = () => {
             // No hay error, pero esta mal las password
             if(!isValidPassword(user, password)) return done(null, false)
 
+            const token = generateToken(user);
+            user.token = token
+
             return done(null, user)
         } catch (error) {
             console.log(error);
         }
     }))
 
+    //Estrategia jwt
+    passport.use('jwt', new JWTStrategy({
+        jwtFromRequest: JWTExtract.fromExtractors([extractCookie]),
+        secretOrKey: process.env.JWT_SIGN
+    }, async(jwt_payload, done) => {
+        done(null, jwt_payload)
+    }
+    ))
     //Estrategia para login con GitHub
     passport.use('github', new GithubStrategy({
         clientID: process.env.GITHUB_CLIENT_ID,

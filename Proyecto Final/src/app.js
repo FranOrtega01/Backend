@@ -21,7 +21,6 @@ const app = express()
 app.use(express.json())
 app.use(express.urlencoded({extended: true}))
 
-
 // Config engine templates
 
 app.engine('handlebars', handlebars.engine())
@@ -30,11 +29,10 @@ app.set('view engine', 'handlebars')
 app.use(express.json())
 app.use(express.static(__dirname + '/public'))
 
-// console.log();
-
-
 // Config DB
+
 const uri = `mongodb+srv://FranOrtega:${process.env.MONGO_PASSWORD}@clustertester.b9tsw8l.mongodb.net/?retryWrites=true&w=majority`
+
 
 const DBname = 'ecommerce'
 
@@ -47,7 +45,7 @@ app.use(session({
     }),
     secret:'mysecret',
     resave: true,
-    saveUnitialized: true
+    saveUninitialized: true
     
 }))
 // Inicializa Middlewares de Passport
