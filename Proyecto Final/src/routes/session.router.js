@@ -51,7 +51,7 @@ router.post('/login', passport.authenticate('login', {failureRedirect: '/session
     }
     console.log(req.session.user);
 
-    res.cookie(env.process.COOKIE_NAME, res.user.token).res.redirect('/products')
+    res.cookie(process.env.COOKIE_NAME, req.user.token).redirect('/products')
 })
 
 router.get('/failLogin', (req, res) => {

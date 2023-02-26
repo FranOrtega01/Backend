@@ -61,7 +61,6 @@ const initializePassport = () => {
     }))
 
     //Estrategia para login
-
     passport.use('login', new LocalStrategy({
         usernameField: 'email',
 
@@ -79,7 +78,7 @@ const initializePassport = () => {
 
             const token = generateToken(user);
             user.token = token
-
+            console.log(user);
             return done(null, user)
         } catch (error) {
             console.log(error);
@@ -94,6 +93,7 @@ const initializePassport = () => {
         done(null, jwt_payload)
     }
     ))
+
     //Estrategia para login con GitHub
     passport.use('github', new GithubStrategy({
         clientID: process.env.GITHUB_CLIENT_ID,
@@ -123,12 +123,12 @@ const initializePassport = () => {
     }
     ))
 
-
+    //Estrategia para login con Google
     passport.use('google', new GoogleStrategy({
         clientID: process.env.GOOGLE_CLIENT_ID,
         clientSecret: process.env.GOOGLE_APP_KEY,
         callbackURL: 'http://127.0.0.1:8080/session/googlecallback'
-    }, async (accesToken, refreshToken, profile, done) => {
+    }, async (issuer, profile, done) => {
         // const { name, emails} = profile
         console.log(profile);
         try {

@@ -11,6 +11,7 @@ dotenv.config();
 
 export default __dirname
 
+//Bcrcypt 
 export const createHash = password => {
     return bcrypt.hashSync(password, bcrypt.genSaltSync(10))
 }
@@ -19,10 +20,12 @@ export const isValidPassword = (user, password) => {
     return bcrypt.compareSync(password, user.password)
 }
 
+//Cookies Token
 export const extractCookie = req => {
-    return (req && req.cookie) ? req.cookie.process.env.COOKIE_NAME : null
+    return (req && req.cookies) ? req.cookies[process.env.COOKIE_NAME] : null
 }
 
+// JWT Token
 export const generateToken = user => {
     const token = jwt.sign({user}, process.env.JWT_SIGN , {expiresIn: '24h'} )
     return token
@@ -44,6 +47,8 @@ export const authToken = (req, res, next) => {
     })
 }
 
+
+//Passport
 export const passportCall = (strategy) => {
     return async(req, res, next) => {
         passport.authenticate(strategy, function(err, user, info){

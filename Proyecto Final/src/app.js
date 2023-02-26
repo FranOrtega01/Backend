@@ -3,6 +3,7 @@ import express from 'express'
 import handlebars from 'express-handlebars'
 import { Server }  from 'socket.io'
 import __dirname from './utils.js';
+import cookieParser from 'cookie-parser'
 
 import mongoose from "mongoose";
 import socket from './socket.js';
@@ -20,12 +21,15 @@ dotenv.config();
 const app = express()
 app.use(express.json())
 app.use(express.urlencoded({extended: true}))
+app.use(cookieParser())
 
 // Config engine templates
 
 app.engine('handlebars', handlebars.engine())
 app.set('views', __dirname + '/views')
 app.set('view engine', 'handlebars')
+
+
 app.use(express.json())
 app.use(express.static(__dirname + '/public'))
 
@@ -44,7 +48,7 @@ app.use(session({
         
     }),
     secret:'mysecret',
-    resave: true,
+    resave: false,
     saveUninitialized: true
     
 }))
