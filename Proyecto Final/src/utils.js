@@ -32,10 +32,7 @@ export const generateToken = user => {
 }
 
 export const authToken = (req, res, next) => {
-    //Si existe el token en el header lo tomo de ahi
-    // let token = req.headers.auth 
 
-    //Si no lo tomo de la cookie donde deberia estar
     let token = req.cookies[process.env.COOKIE_NAME]
     if(!token) return res.status(401).render('errors/base', {error: 'Not authenticated'})
 
