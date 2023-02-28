@@ -129,17 +129,17 @@ const initializePassport = () => {
         clientSecret: process.env.GOOGLE_APP_KEY,
         callbackURL: 'http://127.0.0.1:8080/session/googlecallback'
     }, async (issuer, profile, done) => {
-        // const { name, emails} = profile
+        const { name, emails} = profile
         console.log(profile);
         try {
-            const user = await UserModel.findOne({email: profile.emails[0].value})
+            const user = await UserModel.findOne({email: emails[0].value})
 
             if(user) return done(null, user)
 
             const newUser = await UserModel.create({
-                first_name: profile.name.givenName,
-                last_name:  profile.name.familyName,
-                email: profile.emails[0].value,
+                first_name: name.givenName,
+                last_name:  name.familyName,
+                email: emails[0].value,
                 password: ''
             })
 
