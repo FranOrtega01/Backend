@@ -45,7 +45,7 @@ router.get('/', async (req,res) => {
     data.prevLink = data.hasPrevPage ? `/products?page=${data.prevPage}` : null
     data.nextLink = data.hasNextPage ? `/products?page=${data.nextPage}` : null
 
-    const user = req.user
+    const user = req.user.user
     
     res.render('home', {data, user})
 })

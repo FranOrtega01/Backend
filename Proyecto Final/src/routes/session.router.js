@@ -8,7 +8,7 @@ dotenv.config();
 // View para register 
 
 function auth(req, res, next){
-    if(req.session?.user){
+    if(req.cookies[process.env.COOKIE_NAME]){
         return next()
     }
     return res.status(401).send('Error de autorización')
@@ -42,14 +42,13 @@ router.post('/login', passport.authenticate('login', {failureRedirect: '/session
         return res.status(400).send({status:'error', error: 'Invalid Credentials'})
     }
 
-    req.session.user = {
-        first_name: req.user.first_name,
-        last_name: req.user.last_name,
-        email: req.user.email,
-        age: req.user.age,
-        rol: req.user.rol
-    }
-    console.log(req.session.user);
+    // req.session.user = {
+    //     first_name: req.user.first_name,
+    //     last_name: req.user.last_name,
+    //     email: req.user.email,
+    //     age: req.user.age,
+    //     rol: req.user.rol
+    // }
 
     res.cookie(process.env.COOKIE_NAME, req.user.token).redirect('/products')
 })
@@ -60,62 +59,59 @@ router.get('/failLogin', (req, res) => {
 })
 
 router.get('/profile',auth, (req, res) => {
-
-    res.render('sessions/profile', { user: req.session.user})
+    console.log(req.user);
+    res.render('sessions/profile', { user: req.user})
 })
 
-
-// LogOut
-router.get('/logout', (req, res) => {
-    req.session.destroy(err => {
-        if(err){
-            console.log(err);
-            return res.status(500).render('errors/base', {error: err})
-        }
-        res.redirect('/session/login')
-    })
-})
 
 // Login Github
 
 router.get('/github', 
-    passport.authenticate('github', {scope:['user:email']}),
-    async(req, res) => {}
+passport.authenticate('github', {scope:['user:email']}),
+async(req, res) => {}
 )
 
 router.get('/githubcallback',
     passport.authenticate('github', {failureRedirect: '/login'}),
     async(req, res) => {
         console.log('Callback', req.user);
-
+        
         req.session.user = req.user
-
-        console.log('User Session:', req.session.user);
-
+        
+        
         res.redirect('/products')
-    }
+    })
     
-)
-
-// Login Google
-
-router.get('/google', 
+    // Login Google
+    
+    router.get('/google', 
     passport.authenticate('google', 
     {scope:['email', 'profile']}),
     async(req, res) => {}
-)
-
-router.get('/googlecallback',
+    )
+    
+    router.get('/googlecallback',
     passport.authenticate('google', {failureRedirect: '/login'}),
     async(req, res) => {
         console.log('Callback', req.user);
-
+        
         req.session.user = req.user
-
-        console.log('User Session:', req.session.user);
-
+        
         res.redirect('/products')
     }
     
-)
-export default router
+    )
+    export default router
+    
+    // LogOut
+    router.get('/logout', (req, res) => {
+        // req.session.destroy(err => {
+        //     if(err){
+        //         console.log(err);
+        //         return res.status(500).render('errors/base', {error: err})
+        //     }
+        //     res.clearCookie(process.env.COOKIE_NAME).redirect('/session/login')
+        // })
+        res.clearCookie(process.env.COOKIE_NAME).redirect('/session/login')
+
+    })

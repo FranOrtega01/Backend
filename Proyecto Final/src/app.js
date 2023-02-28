@@ -42,11 +42,6 @@ const DBname = 'ecommerce'
 
 // Config Session
 app.use(session({
-    store: MongoStore.create({
-        mongoUrl: uri,
-        dbName: DBname
-        
-    }),
     secret:'mysecret',
     resave: false,
     saveUninitialized: true

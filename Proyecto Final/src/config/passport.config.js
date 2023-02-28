@@ -25,7 +25,7 @@ const initializePassport = () => {
     async (req, username, password, done) => {
 
         // Datos del form
-        const {first_name, last_name, email, age, rol} = req.body
+        let {first_name, last_name, email, age, rol} = req.body
 
         try {
             // Buscar un user con ese email
@@ -40,7 +40,6 @@ const initializePassport = () => {
             // Handle roles
             //Cambiar
             if(email == process.env.ADMIN_EMAIL && password == process.env.ADMIN_PASSWORD) rol = 'admin'
-
             // Crea el user con el hash
             const newUser = { 
                 first_name, 
@@ -50,7 +49,6 @@ const initializePassport = () => {
                 password: createHash(password), 
                 rol
             }
-
             const result = await UserModel.create(newUser)
 
             return done(null, result)
@@ -78,7 +76,6 @@ const initializePassport = () => {
 
             const token = generateToken(user);
             user.token = token
-            console.log(user);
             return done(null, user)
         } catch (error) {
             console.log(error);
