@@ -18,7 +18,7 @@ const socket = (io, app) => {
         res.redirect('/session/login')
     })
 
-    app.use('/products', passportCall('jwt'), productViewRouter)
+    app.use('/products', productViewRouter)
     app.use('/cart', cartViewRouter )
     app.use('/api/products', productRouter)
     app.use('/api/carts', cartRouter)
