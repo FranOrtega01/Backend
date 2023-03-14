@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import cartModel from '../dao/models/cart.model.js'
-
+import { getAll, getById } from '../controller/carts.controller.js';
 const router = Router()
 
 // Get all carts
