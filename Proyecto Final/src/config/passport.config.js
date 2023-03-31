@@ -1,13 +1,12 @@
 import passport from 'passport'
 import local from 'passport-local'
 import jwt from 'passport-jwt'
-import UserModel from '../dao/models/user.model.js';
 import GithubStrategy from 'passport-github2'
 import GoogleStrategy from 'passport-google-oidc'
 import { createHash, isValidPassword, generateToken, extractCookie} from "../utils.js";
+import { UserService, CartService } from '../repository/index.js'
+import config from './config.js'
 
-import dotenv from "dotenv"
-dotenv.config()
 
 //Passport (Local) - mejora la arquitectura y estructura generando estrategias de auth y autorizacion, dejando el codigo mas limpio
 
@@ -29,7 +28,7 @@ const initializePassport = () => {
 
         try {
             // Buscar un user con ese email
-            const user = await UserModel.findOne({email: username})
+            const user = await UserService.getOneByEmail(username)
 
             // Si existe return 
             if(user){
@@ -39,7 +38,7 @@ const initializePassport = () => {
 
             // Handle roles
             //Cambiar
-            if(email == process.env.ADMIN_EMAIL && password == process.env.ADMIN_PASSWORD) rol = 'admin'
+            if(email == config.adminEmail && password == config.adminPass) rol = 'admin'
             // Crea el user con el hash
             const newUser = { 
                 first_name, 
@@ -47,9 +46,10 @@ const initializePassport = () => {
                 email, 
                 age, 
                 password: createHash(password), 
+                cart: await CartService.create(),
                 rol
             }
-            const result = await UserModel.create(newUser)
+            const result = await UserService.create(newUser)
 
             return done(null, result)
 
@@ -64,7 +64,7 @@ const initializePassport = () => {
 
     }, async (username, password, done) => {
         try {
-            const user = await UserModel.findOne({email: username})
+            const user = await UserService.getOneByEmail(username)
 
             if(!user){
                 console.log('User doesnt exist');
@@ -74,72 +74,82 @@ const initializePassport = () => {
             // No hay error, pero esta mal las password
             if(!isValidPassword(user, password)) return done(null, false)
 
+            // jwt Token
+
             const token = generateToken(user);
             user.token = token
             return done(null, user)
+            
         } catch (error) {
             console.log(error);
         }
     }))
 
-    //Estrategia jwt
-    passport.use('jwt', new JWTStrategy({
-        jwtFromRequest: JWTExtract.fromExtractors([extractCookie]),
-        secretOrKey: process.env.JWT_SIGN
-    }, async(jwt_payload, done) => {
-        done(null, jwt_payload)
-    }
-    ))
-
     //Estrategia para login con GitHub
     passport.use('github', new GithubStrategy({
-        clientID: process.env.GITHUB_CLIENT_ID,
-        clientSecret: process.env.GITHUB_APP_KEY,
+        clientID: config.githubClientID,
+        clientSecret: config.githubAppKey,
         callbackURL: 'http://127.0.0.1:8080/session/githubcallback'
     }, async (accesToken, refreshToken, profile, done) => {
         console.log(profile);
 
         try {
-            const user = await UserModel.findOne({email: profile._json.email})
+            const user = await UserService.getOneByEmail( profile._json.email )
 
-            if(user) return done(null, user)
+            if (user) {
+                const token = generateToken(user);
+                user.token = token;
+                return done(null, user)
+            };
 
-            const newUser = await UserModel.create({
+            const newUser = await UserService.create({
                 first_name: profile._json.name,
                 last_name: '',
-                email: profile._json.email,
-                password: ''
+                email: profile.emails[0].value,
+                age: profile._json.age,
+                password: '', 
+                cart: await CartService.create(),
+                rol: 'user'
             })
 
+            const token = generateToken(newUser);
+            newUser.token = token;
 
-            return done(null, newUser)
-
+            return done(null, newUser);
         } catch (error) {
-            return done('Error to login with GitHub' + error)
+            return done('Error to login with GitHub: ' + error);
         }
     }
     ))
 
     //Estrategia para login con Google
     passport.use('google', new GoogleStrategy({
-        clientID: process.env.GOOGLE_CLIENT_ID,
-        clientSecret: process.env.GOOGLE_APP_KEY,
+        clientID: config.googleClientID,
+        clientSecret: config.googleAppKey,
         callbackURL: 'http://127.0.0.1:8080/session/googlecallback'
     }, async (issuer, profile, done) => {
         const { name, emails} = profile
         console.log(profile);
         try {
-            const user = await UserModel.findOne({email: emails[0].value})
+            const user = await UserService.getOneByEmail(emails[0].value)
 
-            if(user) return done(null, user)
+            if(user){
+                const token = generateToken(user);
+                user.token = token;
+                return done(null, user)
+            }
 
-            const newUser = await UserModel.create({
+            const newUser = await UserService.create({
                 first_name: name.givenName,
                 last_name:  name.familyName,
                 email: emails[0].value,
-                password: ''
+                password: '',
+                cart: await CartService.create(),
+                rol:'user'
             })
 
+            const token = generateToken(user);
+            newUser.token = token;
             return done(null, newUser)
 
         } catch (error) {
@@ -148,13 +158,24 @@ const initializePassport = () => {
     }
     ))
 
+    // Estrategia para current con JWT
+    passport.use('current', new JWTStrategy({
+        jwtFromRequest: JWTExtract.fromExtractors([extractCookie]),
+        secretOrKey: config.jwtPrivateKey,
+    }, async(jwt_payload, done)=>{
+        try {
+            return done(null, jwt_payload);
+        } catch (error) {
+            return done(error);
+        }
+    }))
     
     passport.serializeUser((user, done) => {
         done(null, user._id)
     })
 
     passport.deserializeUser(async (id, done) => {
-        const user = await UserModel.findById(id)
+        const user = await UserService.getOneByID(id)
         done(null, user)
     })
 }

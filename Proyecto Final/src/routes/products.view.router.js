@@ -1,25 +1,18 @@
 
 import { Router } from 'express'
-import productModel from '../dao/models/products.model.js';
-import { getAll, getById } from '../controller/products.view.controller.js';
+import { getPaginate, getOneByID, getRealTime } from '../DAO/controller/products.view.controller.js';
 
 const router = Router()
 
 
 // Real time products
-router.get('/realTimeProducts', async (req, res) => {
-    const products = await productModel.find().lean().exec()
-    res.render('realTimeProducts',{
-        title: 'Real Time Products',
-        products
-    })
-})
+router.get('/realTimeProducts', getRealTime)
 
 // Listar products
-router.get('/', getAll)
+router.get('/', getPaginate)
 
 // Get por id
-router.get('/:id', getById)
+router.get('/:id', getOneByID)
 
 
 export default router

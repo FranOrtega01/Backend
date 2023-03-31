@@ -1,9 +1,9 @@
-import { Router } from "express";
+import { Router } from 'express';
+import { chat } from '../DAO/controller/messages.controller.js';
+import { authorization } from '../utils.js';
 
 const router = Router();
 
-router.get('/', (req, res) => {
-    res.render('chat', {});
-});
+router.get('/',authorization('user'), chat);
 
-export default router
+export default router;

@@ -1,133 +1,42 @@
 import { Router } from 'express';
-import cartModel from '../dao/models/cart.model.js'
-import { getAll, getById } from '../controller/carts.controller.js';
+import { get, create, getOneByID,addProduct, update, updateProduct, deleteCart, deleteOneProduct, clearCart } from '../DAO/controller/carts.controller.js'
+import { authorization } from '../utils.js'
+
+
 const router = Router()
 
-// Get all carts
-router.get('/', async (req, res) => {
-    const carts = await cartModel.find().lean().exec()
-    res.json({carts})
-})
-
-// Get cart by ID
-router.get('/:id', async (req, res) => {
-    const id = (req.params.id)
-    try {
-        const cart = await cartModel.findOne({_id: id}).populate('products.id')
-        console.log(cart);
-        res.json({cart})
-    } catch (error) {
-        console.log(error);
-        res.json({
-            status: "Error",
-            message: 'Cart not found'
-        })
-    }
-})
-
-// Create new cart
-router.post('/', async (req ,res) => {
-    const newCart = await cartModel.create({})
-    res.json({status:'Success', newCart})
-})
-
-// Add products to cart
-router.post("/:cid/product/:pid", async (req, res) => {
-    const cartID = req.params.cid
-    const productID = req.params.pid
-    const quantity = req.body.quantity || 1
-    const cart = await cartModel.findById(cartID)
-
-    let found = false
-
-    for (let i = 0; i < cart.products.length; i++) {
-        if (cart.products[i].id == productID) {
-
-            // Si se aclara cantidad, se suma, sino se suma 1 por defecto
-            quantity === 1 ? cart.products[i].quantity++ : cart.products[i].quantity += quantity
-            found = true
-            break
-        }
-    }
-    if (!found) {
-        cart.products.push({ id: productID, quantity})
-    }
-
-    await cart.save()
-
-    res.json({status: "Success", cart})
-})
-
-// Update cart by ID 
-
-router.put('/:cid', async (req,res) => {
-    const id = req.params.cid
-    const cart = await cartModel.findById(id)
+// Get all carts [admin]
+// router.get('/', authorization('admin'), get);
+router.get('/', get);
 
 
-    cart.products = req.body
-
-    cart.save()
-
-    res.json({status: "Success", cart})
-
-})
-
-// Update cart product quantity by prod ID
-
-router.put("/:cid/product/:pid", async (req, res) => {
-    const cartID = req.params.cid
-    const productID = req.params.pid
-    const cart = await cartModel.findById(cartID)
-    if(!cart) return res.status(404).json({status: 'Error', error: 'Product not found'})
-
-    //Toma la nueva cantidad pasada por req.body
-    const newQuantity = req.body
-
-    const Idx = cart.products.findIndex(({id}) => id == productID)
-    
-    if(Idx === -1) return res.status(404).json({status: 'Error', error: 'Product not found'}) 
-
-    //Reemplaza el quantity anterior por el nuevo
-    cart.products[Idx].quantity = newQuantity.quantity
-
-    await cart.save()
-
-    res.json({status: "Success", cart})
-})
+// Get cart by id [user]
+// router.get('/:cid', authorization('user'), getOneByID);
+router.get('/:cid',  getOneByID);
 
 
-// Delete cart by ID
-router.delete('/:cid', async (req,res) => {
-    const id = req.params.cid
-    const deleted = await cartModel.deleteOne({_id: id})
-    
-    res.json({
-        status: "Success",
-        massage: "Cart deleted",
-        deleted
-    })
-})
+// Create cart [user]
+router.post('/', authorization('user'), create);
+
+// Add product [user]
+router.post('/:cid/products/:pid', authorization('user'), addProduct);
+
+// Update cart [user]
+router.put('/:cid', authorization('user'), update);
+
+// Update product [user]
+router.put('/:cid/products/:pid', authorization('user'), updateProduct);
+
+// Delete cart [admin]
+router.delete('/:cid', authorization('admin'), deleteCart)
+
+// Clear cart [user]
+router.delete('/:cid', authorization('user'), clearCart);
+
+// Delete product from cart [user]
+router.delete('/:cid/products/:pid', authorization('user'), deleteOneProduct)
 
 
-// Delete cart product by ID
-router.delete("/:cid/product/:pid", async (req, res) => {
-    const cartID = req.params.cid
-    const productID = req.params.pid
-    const cart = await cartModel.findById(cartID)
-    if(!cart) return res.status(404).json({status: 'Error', error: 'Product not found'})
 
-
-    const Idx = cart.products.findIndex(({id}) => id == productID)
-    console.log(Idx);
-    
-    Idx === -1 ? 
-    res.status(404).json({status: 'Error', error: 'Product not found'}) :
-    cart.products.splice(Idx, 1)
-
-    await cart.save()
-
-    res.json({status: "Success", cart})
-})
 
 export default router

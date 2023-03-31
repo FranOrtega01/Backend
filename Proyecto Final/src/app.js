@@ -5,17 +5,11 @@ import { Server }  from 'socket.io'
 import __dirname from './utils.js';
 import cookieParser from 'cookie-parser'
 
-import mongoose from "mongoose";
 import socket from './socket.js';
 
 import session from 'express-session';
-import MongoStore from 'connect-mongo';
 import passport from 'passport';
 import initializePassport from './config/passport.config.js';
-
-import dotenv from 'dotenv';
-dotenv.config();
-
 
 // Init Servers
 const app = express()
@@ -33,38 +27,22 @@ app.set('view engine', 'handlebars')
 app.use(express.json())
 app.use(express.static(__dirname + '/public'))
 
-// Config DB
 
-const uri = `mongodb+srv://FranOrtega:${process.env.MONGO_PASSWORD}@clustertester.b9tsw8l.mongodb.net/?retryWrites=true&w=majority`
-
-
-const DBname = 'ecommerce'
 
 // Config Session
 app.use(session({
-    secret:'mysecret',
+    secret: 'secret',
     resave: false,
     saveUninitialized: true
-    
-}))
-// Inicializa Middlewares de Passport
+}));
+
+
+// Passport Middlewares Config
 initializePassport()
 app.use(passport.initialize())
 app.use(passport.session())
 
-// Server + DB setup
-mongoose.set('strictQuery', false)
-
-mongoose.connect(uri,{dbName: DBname}, error => {
-    if(error){
-        console.log(error);
-        console.log('Couldnt connect to DB');
-        return
-    }
-    console.log('Connected to DB');
-
-    const httpServer = app.listen(8080, () => console.log('Listening...'))
-    const socketServer = new Server(httpServer)
-    // Socket() - Maneja los mensajes 
-    socket(socketServer, app)
-})
+// Server 
+const httpServer = app.listen(8080, () => console.log('Listening...'))
+const socketServer = new Server(httpServer)
+socket(socketServer, app)

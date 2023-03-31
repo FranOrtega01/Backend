@@ -2,7 +2,7 @@
 <br>
 
     <div class="row">
-        {{#each data.docs}}
+        {{#each data}}
         <div class="card m-2" style="width: 18rem;">
             <div class="card-body">
                 <h5 class="card-title">{{title}}</h5>
@@ -16,16 +16,6 @@
             </div>
         </div>
         {{/each}}
-    </div>
-
-    <div>
-        {{#if data.hasPrevPage}}
-            <a href="{{data.prevLink}}" style="border: 1px solid black; border-radius:4px; padding:4px">{{data.prevPage}}</a>
-        {{/if}}
-        Página <b>{{data.page}}</b>
-        {{#if data.hasNextPage}}
-            <a href="{{data.nextLink}}" style="border: 1px solid black; border-radius:4px; padding:4px">{{data.nextPage}}</a>
-        {{/if}}
     </div>
 
     <a class="btn btn-dark" href="/session/profile">Mi Perfil</a>

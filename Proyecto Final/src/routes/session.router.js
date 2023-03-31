@@ -1,18 +1,11 @@
 import { Router } from "express";
 import passport from 'passport'
 const router = Router();
-
-import dotenv from 'dotenv';
-dotenv.config();
+import config from "../config/config.js";
 
 // View para register 
 
-function auth(req, res, next){
-    if(req.cookies[process.env.COOKIE_NAME]){
-        return next()
-    }
-    return res.status(401).send('Error de autorización')
-}
+
 
 router.get('/register', (req, res) => {
     res.render('sessions/register' , {title: 'Register'})
@@ -36,21 +29,14 @@ router.get('/login', (req, res) => {
 })
 
 // API LogIn
-router.post('/login', passport.authenticate('login', {failureRedirect: '/session/failLogin'}), async (req,res) => {
-
-    if(!req.user){
-        return res.status(400).send({status:'error', error: 'Invalid Credentials'})
+router.post('/login', passport.authenticate('login', { failureRedirect: '/session/faillogin' }), async (req, res) => {
+    if (!req.user) {
+        return res.status(400).send({ status: 'error', error: 'Invalid credentials' })
     }
 
-    // req.session.user = {
-    //     first_name: req.user.first_name,
-    //     last_name: req.user.last_name,
-    //     email: req.user.email,
-    //     age: req.user.age,
-    //     rol: req.user.rol
-    // }
-
-    res.cookie(process.env.COOKIE_NAME, req.user.token).redirect('/products')
+    //cookie del token
+    console.log(config.jwtCookieName);
+    res.cookie(config.jwtCookieName, req.user.token).redirect('/products');
 })
 
 router.get('/failLogin', (req, res) => {
@@ -58,7 +44,7 @@ router.get('/failLogin', (req, res) => {
     res.send({error: 'Failed'})
 })
 
-router.get('/profile',auth, (req, res) => {
+router.get('/profile', (req, res) => {
     console.log(req.user);
     res.render('sessions/profile', { user: req.user})
 })
@@ -77,9 +63,7 @@ router.get('/githubcallback',
         console.log('Callback', req.user);
         
         req.session.user = req.user
-        
-        
-        res.redirect('/products')
+        res.cookie(config.jwtCookieName, req.user.token).redirect('/products');
     })
     
     // Login Google
@@ -96,8 +80,7 @@ router.get('/githubcallback',
         console.log('Callback', req.user);
         
         req.session.user = req.user
-        
-        res.redirect('/products')
+        res.cookie(config.jwtCookieName, req.user.token).redirect('/products');
     }
     
     )
@@ -105,13 +88,5 @@ router.get('/githubcallback',
     
     // LogOut
     router.get('/logout', (req, res) => {
-        // req.session.destroy(err => {
-        //     if(err){
-        //         console.log(err);
-        //         return res.status(500).render('errors/base', {error: err})
-        //     }
-        //     res.clearCookie(process.env.COOKIE_NAME).redirect('/session/login')
-        // })
-        res.clearCookie(process.env.COOKIE_NAME).redirect('/session/login')
-
+        res.clearCookie(config.jwtCookieName).redirect('/session/login')
     })

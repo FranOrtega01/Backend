@@ -1,31 +1,18 @@
 import { Router } from 'express';
-import cartModel from '../dao/models/cart.model.js'
+import { authorization } from '../utils.js'
+import { get, getOneByID, purchase } from '../DAO/controller/carts.view.controller.js'
+
 
 const router = Router()
 
 // Get all carts
-router.get('/', async (req, res) => {
-    const carts = await cartModel.find().lean().exec()
-    res.json({carts})
-})
+router.get('/', get)
 
 // Get cart by ID
-router.get('/:id', async (req, res) => {
-    const id = (req.params.id)
-    try {
-        const data = await cartModel.findOne({_id: id}).populate('products.id')
-        console.log(data);
-        res.render('cart', data)
+router.get('/:cid', getOneByID)
 
-
-    } catch (error) {
-        console.log(error);
-        res.json({
-            status: "Error",
-            message: 'Cart not found'
-        })
-    }
-})
-
+// Ticket
+// Generate purchase ticket [user]
+router.post('/:cid/purchase',authorization('user'), purchase);
 
 export default router

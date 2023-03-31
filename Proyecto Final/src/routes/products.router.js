@@ -1,23 +1,22 @@
-
 import { Router } from 'express'
-import { getAll, getById, create, updateOne, deleteOne } from '../controller/products.controller.js';
+import { get, getPaginate, create, getOneByID, update, deleteOne } from '../DAO/controller/products.controller.js';
+import { authorization } from '../utils.js';
 
 const router = Router()
 
 // Listar products
-
-router.get('/', getAll)
+router.get('/', getPaginate)
 
 // Get por id
-router.get("/:id", getById)
+router.get("/:pid", getOneByID)
 
 // Crear productos
-router.post('/', create)
+router.post('/', authorization('admin'), create)
 
 // Update por id
-router.put("/:id", updateOne)
+router.put("/:pid" ,update)
 
 // Eliminar por id
-router.delete('/:id', deleteOne)
+router.delete('/:pid',  authorization('admin'),deleteOne)
 
 export default router

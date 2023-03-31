@@ -1,17 +1,21 @@
-<h1 class="display-5 text-center">Productos disponibles</h1>
+    {{#each carts}}
+    <h3>Cart ID: {{this._id}}</h3>
+    <table class="table table-dark table-striped table-hover">
+        <tr>
+            <td><strong>Producto</strong></td>
+            <td><strong>Precio</strong></td>
+            <td><strong>Cantidad</strong></td>
+            
+        </tr>
+            {{#each products}}
+            <tr>
+                {{#id}}
+                <td>{{title}}</td>
+                <td>${{price}}</td> 
+                {{/id}}
+                <td>{{this.quantity}}</td>
+            </tr>
+            {{/each}}  
+    </table>
+    {{/each}}
 <br>
-<h2>Cart ID: {{this._id}}</h2>
-<table class="table table-dark table-striped table-hover">
-    <tr>
-        <td><strong>ID</strong></td>
-        <td><strong>Producto</strong></td>
-        <td><strong>Quantity</strong></td>
-    </tr>
-    {{#each data.products}}
-    <tr>
-        <td>{{this._id}}</td> 
-        <td>{{this.title}}</td>
-        <td>{{this.quantity}}</td>
-    </tr>
-    {{/each}}  
-</table>

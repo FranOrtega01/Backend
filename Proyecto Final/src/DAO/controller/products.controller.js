@@ -1,8 +1,15 @@
-import ProductsService from "../services/products.service.js";
+import { ProductService } from '../../repository/index.js'
 
-const productService = new ProductsService()
 
-export const getAll = async (req, res) => {
+export const get = async (req, res) => {
+    try {
+        const products = await ProductService.get()
+        res.json({payload: products})
+    } catch (error) {
+        res.json(error)
+    }
+}
+export const getPaginate = async (req, res) => {
     const limit = req.query?.limit || 10
     const page = req.query?.page || 1
     const filter = req.query?.query || ''
@@ -28,7 +35,7 @@ export const getAll = async (req, res) => {
 
     try {
 
-        const data = await productService.paginate(search, options)
+        const data = await ProductService.getPaginate(search, options)
     
         data.prevLink = data.hasPrevPage ? `/api/products?page=${data.prevPage}` : null
         data.nextLink = data.hasNextPage ? `/api/products?page=${data.nextPage}` : null
@@ -52,69 +59,67 @@ export const getAll = async (req, res) => {
         res.send({status: 'error', error})
     }
 }
-export const getById = async( req, res) => {
-    const id = req.params.id
-
-    try {
-        const product = await productService.getById(id)
-        res.json({product})
-    } catch (error) {
-        console.log(error);
-        res.json({
-            status: "Error",
-            message: 'Product not found'
-        })
-    }
-}
 export const create = async( req, res ) => {
     try {
         const product = req.body
-        const newProduct = await productService.create(product)
-        req.io.emit('updatedProducts', await productService.getAll())
+        const newProduct = await ProductService.create(product)
+        req.io.emit('updatedProducts', await ProductService.get())
 
         res.json({
-            status: "Success",
+            status: "success",
             newProduct
         })
 
     } catch (error) {
-        console.log(error)
         res.json({
             error
         })
     }
 }
-export const updateOne = async(req, res) => {
-    const id = req.params.id
+export const getOneByID = async( req, res) => {
+    const { pid } = req.params
+
+    try {
+        const product = await ProductService.getOneByID(pid)
+        res.json({product})
+    } catch (error) {
+        console.log(error);
+        res.json({
+            status: "error",
+            message: 'Product not found'
+        })
+    }
+}
+export const update = async(req, res) => {
+    const { pid } = req.params
     const productToUpdate = req.body
 
     try {
-        await productService.update(id, productToUpdate)
+        const update = await ProductService.update(pid, productToUpdate)
     
         //Update realTime
-        req.io.emit('updatedProducts', await productService.getAll())
+        req.io.emit('updatedProducts', await ProductService.get())
         res.json({
-            status: "Success",
+            status: "success",
+            update
         })
         
     } catch (error) {
-        console.log(error)
         res.json({
             error
         })
     }
 }
 export const deleteOne = async (req, res) => {
-    const id = req.params.id
+    const { pid } = req.params
 
-    const deleted = await productService.delete(id)
+    const deleted = await ProductService.deleteOne(pid)
     
     //Update realTime
-    req.io.emit('updatedProducts', await productService.getAll())
+    req.io.emit('updatedProducts', await ProductService.get())
 
     res.json({
-        status: "Success",
-        massage: "Product deleted",
+        status: "success",
         deleted
     })
 }

@@ -2,12 +2,41 @@
     <div class="row">
         <div class="card m-2" style="width: 18rem;">
             <div class="card-body">
-                <h5 class="card-title">{{this.title}}</h5>
-                <h6 class="card-subtitle mb-2 text-muted">{{this.category}}</h6>
-                <p class="card-text">{{this.description}}</p>
-                <p class="card-text">${{this.price}}</p>
-                <a href="#" class="card-link">Agregar al carrito</a>
+                <h5 class="card-title">{{product.title}}</h5>
+                <h6 class="card-subtitle mb-2 text-muted">{{product.category}}</h6>
+                <p class="card-text">{{product.description}}</p>
+                <p class="card-text">${{product.price}}</p>
+                <form action="/api/carts/{{user.cart._id}}/products/{{product._id}}" method="post">
+                    <div class="quantityButtons">
+                        <button id="remove">-</button>
+                        <input type="number" name="quantity" id="quantity" value="1" min="1" max={{product.stock}}>
+                        <button id="add">+</button>
+                    </div>
+                    <input class="col-12 btn btn-primary" id="formSubmit" type="submit" value="Agregar al carrito">
+                </form>
+                <script>
+                    const btnAdd = document.getElementById('add')
+
+                    const btnRemove = document.getElementById('remove')
+
+                    const quantity = document.getElementById('quantity')
+
+                    btnAdd.addEventListener('click', e => {
+                        e.preventDefault()
+                        if(quantity.value == {{product.stock}}) return
+                        quantity.value++
+                    }) 
+
+                    btnRemove.addEventListener('click', e => {
+                        e.preventDefault()
+                        if(quantity.value == quantity.min) return
+                        quantity.value--
+                    }) 
+                </script>
             </div>
         </div>
     </div>
+                <a class="btn btn-dark" href="/products">Go back</a>
 </div>
+
+{{!-- <script src="js/buttons.js"></script> --}}

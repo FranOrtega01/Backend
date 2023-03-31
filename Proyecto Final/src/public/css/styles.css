@@ -1,0 +1,19 @@
+.quantityButtons{
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+    margin-bottom: 15px;
+}
+
+.quantityButtons button{
+    border: none;
+    background-color: transparent;
+    font-weight:bold;
+    font-size: 24px;
+}
+
+.quantityButtons input{
+    border: none;
+    text-align: center;
+    font-weight: 600;
+}
