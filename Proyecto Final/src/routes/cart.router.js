@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { get, create, getOneByID,addProduct, update, updateProduct, deleteCart, deleteOneProduct, clearCart } from '../DAO/controller/carts.controller.js'
+import { get, create, getOneByID,addProduct, update, updateProduct, deleteCart, deleteOneProduct, clearCart } from '../controller/carts.controller.js'
 import { authorization } from '../utils.js'
 
 

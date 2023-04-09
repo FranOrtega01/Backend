@@ -19,7 +19,8 @@ router.post('/register', passport.authenticate('register', {failureRedirect: '/s
 })
 
 router.get('/failRegister', (req, res) => {
-    console.log('Fail Strategy');
+
+    req.logger.error('Strategy failed');
     res.send({error: 'Failed'})
 })
 
@@ -35,17 +36,16 @@ router.post('/login', passport.authenticate('login', { failureRedirect: '/sessio
     }
 
     //cookie del token
-    console.log(config.jwtCookieName);
     res.cookie(config.jwtCookieName, req.user.token).redirect('/products');
 })
 
 router.get('/failLogin', (req, res) => {
-    console.log('Fail Strategy');
+    req.logger.error('Strategy failed');
     res.send({error: 'Failed'})
 })
 
 router.get('/profile', (req, res) => {
-    console.log(req.user);
+    req.logger.info(user)
     res.render('sessions/profile', { user: req.user})
 })
 
@@ -60,7 +60,8 @@ async(req, res) => {}
 router.get('/githubcallback',
     passport.authenticate('github', {failureRedirect: '/login'}),
     async(req, res) => {
-        console.log('Callback', req.user);
+        req.logger.info('Callback', req.user)
+
         
         req.session.user = req.user
         res.cookie(config.jwtCookieName, req.user.token).redirect('/products');
@@ -77,7 +78,8 @@ router.get('/githubcallback',
     router.get('/googlecallback',
     passport.authenticate('google', {failureRedirect: '/login'}),
     async(req, res) => {
-        console.log('Callback', req.user);
+        req.logger.info('Callback', req.user)
+
         
         req.session.user = req.user
         res.cookie(config.jwtCookieName, req.user.token).redirect('/products');

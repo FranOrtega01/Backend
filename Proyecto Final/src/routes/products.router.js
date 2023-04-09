@@ -1,5 +1,5 @@
 import { Router } from 'express'
-import { get, getPaginate, create, getOneByID, update, deleteOne } from '../DAO/controller/products.controller.js';
+import { get, getPaginate, create, getOneByID, update, deleteOne } from '../controller/products.controller.js';
 import { authorization } from '../utils.js';
 
 const router = Router()

@@ -79,8 +79,6 @@ export default class Cart{
 
             comparation.forEach(async product => {
                 // Si el stock es mayor a la cantidad comprada
-                console.log(product.id.stock);
-                console.log(product.quantity);
                 // Stock = Stock - cantidad comprada
                 if (product.id.stock >= product.quantity) {
 
@@ -103,7 +101,7 @@ export default class Cart{
             }
             return purchase;
         } catch (error) {
-            console.log('Cart not found');
+            throw new Error(error)
         }
     }
     

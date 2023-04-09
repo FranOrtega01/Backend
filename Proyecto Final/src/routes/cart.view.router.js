@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { authorization } from '../utils.js'
-import { get, getOneByID, purchase } from '../DAO/controller/carts.view.controller.js'
+import { get, getOneByID, purchase } from '../controller/carts.view.controller.js'
 
 
 const router = Router()

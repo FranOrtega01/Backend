@@ -1,4 +1,4 @@
-import { ProductService } from "../../repository/index.js";
+import { ProductService } from '../repository/index.js'
 
 export const getPaginate = async (req, res) => {
     const limit = req.query?.limit || 10

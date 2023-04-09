@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { get } from '../DAO/controller/mock.controller.js'
+import { get } from '../controller/mock.controller.js'
 
 
 const router = Router();

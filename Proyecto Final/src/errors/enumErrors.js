@@ -1,4 +1,4 @@
-const EErros = {
+const EErrors = {
     ROUTING_ERROR: 1,
     INVALID_TYPES_ERROR: 2,
     DATABASES_ERROR: 3,
@@ -6,12 +6,9 @@ const EErros = {
     CREATE_PRODUCT_ERROR:5,
     CART_NOT_FOUND_ERROR:6,
     ADD_PRODUCT_IN_CART_ERROR: 7,
-    UPDATE_PRODUCT_IN_CART_ERROR:8,
-    GET_PRODUCTS_ERROR: 9,
-    GET_USERS_ERROR: 10,
     USER_NOT_FOUND_ERROR:11,
     CREATE_USER_ERROR: 12,
-    UPDATE_USER_ERROR: 13,
+    CREATE_CART_ERROR:13,
 }
 
-export default EErros;
+export default EErrors;

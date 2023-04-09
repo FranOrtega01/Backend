@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { chat } from '../DAO/controller/messages.controller.js';
+import { chat } from '../controller/messages.controller.js';
 import { authorization } from '../utils.js';
 
 const router = Router();

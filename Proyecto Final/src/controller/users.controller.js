@@ -1,4 +1,4 @@
-import { UserService } from "../../repository";
+import { UserService } from '../repository/index.js'
 
 export const get = async (req, res) => {
     const user = await UserService.get()

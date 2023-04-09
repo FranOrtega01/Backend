@@ -1,21 +1,28 @@
-
 import express from 'express'
 import handlebars from 'express-handlebars'
-import { Server }  from 'socket.io'
-import __dirname from './utils.js';
 import cookieParser from 'cookie-parser'
 
+import { Server }  from 'socket.io'
 import socket from './socket.js';
+import __dirname from './utils.js';
+
 
 import session from 'express-session';
 import passport from 'passport';
 import initializePassport from './config/passport.config.js';
+
+import { addLogger } from './logger.js';
+import errorHandler from './errorHandler/errors.js'
+
 
 // Init Servers
 const app = express()
 app.use(express.json())
 app.use(express.urlencoded({extended: true}))
 app.use(cookieParser())
+app.use(addLogger)
+app.use(errorHandler)
+
 
 // Config engine templates
 

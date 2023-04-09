@@ -10,7 +10,7 @@ export default class cartRepository{
         try {
             return await this.dao.get()
         } catch (error) {
-            return console.log(error);
+            throw new Error(error)
         }
     }
 
@@ -18,7 +18,8 @@ export default class cartRepository{
         try {
             return await this.dao.create()
         } catch (error) {
-            return console.log(error);
+            throw new Error(error)
+
         }
     }
 
@@ -26,7 +27,8 @@ export default class cartRepository{
         try {
             return await this.dao.getOneByID(id)
         } catch (error) {
-            return console.log('Cart not found');
+            throw new Error('Cart not found')
+
         }
     }
 
@@ -35,7 +37,7 @@ export default class cartRepository{
             const result = await this.dao.addProduct(cid,pid, qty);
             return result;
         } catch (error) {
-            return console.log(error);
+            throw new Error(error)
         }
     }
 
@@ -44,7 +46,7 @@ export default class cartRepository{
             const result = await this.dao.update(id, products);
             return result;
         } catch (error) {
-            console.log(error);
+            throw new Error(error)
         }
     }
 
@@ -52,7 +54,7 @@ export default class cartRepository{
         try {
             return this.dao.updateProduct(id, pid, qty);
         } catch (error) {
-            console.log(error);
+            throw new Error(error)
         }
     }
 
@@ -60,7 +62,7 @@ export default class cartRepository{
         try {
             return await this.dao.deleteCart(id);
         } catch (error) {
-            console.log(error);
+            throw new Error(error)
         }
     }
 
@@ -68,7 +70,7 @@ export default class cartRepository{
         try {
             return await this.dao.deleteOneProduct(id,pid);
         } catch (error) {
-            console.log(error);
+            throw new Error(error)
         }
     }
 
@@ -76,7 +78,7 @@ export default class cartRepository{
         try {
             return await this.dao.clearCart(id);
         } catch (error) {
-            console.log(error);
+            throw new Error(error)
         }
     }
 

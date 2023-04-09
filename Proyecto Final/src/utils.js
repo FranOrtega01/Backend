@@ -46,7 +46,6 @@ export const authToken = (req, res, next) => {
 }
 export const authorization = (rol) => {
     return async (req, res, next) => {
-        console.log('USUARIO AUTH: ', req.user);
         const user = req.user?.user || req.user;
         if (!user) return res.status(401).send({ error: "Unauthorized" });
         if (user.rol != rol) return res.status(403).send({ error: 'No Permission' })

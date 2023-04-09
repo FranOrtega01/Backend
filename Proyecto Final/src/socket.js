@@ -5,9 +5,11 @@ import productViewRouter from './routes/products.view.router.js'
 import cartViewRouter from './routes/cart.view.router.js'
 import sessionRouter from './routes/session.router.js'
 import mockingRouter from './routes/mocking.router.js'
+import loggerTest from "./routes/logger.router.js"
 import { passportCall } from "./utils.js";
 
 const socket = (io, app) => {
+    
     app.use((req, res, next) => {
         req.io = io;
         next();
@@ -25,6 +27,9 @@ const socket = (io, app) => {
     app.use('/chat', passportCall('current'), chatRouter)
     app.use('/session', sessionRouter) 
     app.use('/mockingproducts', mockingRouter)
+    app.use("/loggerTest", loggerTest)
+    
 }
+
 
 export default socket

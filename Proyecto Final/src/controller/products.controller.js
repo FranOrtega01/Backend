@@ -1,4 +1,4 @@
-import { ProductService } from '../../repository/index.js'
+import { ProductService } from '../repository/index.js'
 
 
 export const get = async (req, res) => {
@@ -83,7 +83,7 @@ export const getOneByID = async( req, res) => {
         const product = await ProductService.getOneByID(pid)
         res.json({product})
     } catch (error) {
-        console.log(error);
+        req.logger.error('error: ', error);
         res.json({
             status: "error",
             message: 'Product not found'

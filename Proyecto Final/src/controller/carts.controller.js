@@ -1,40 +1,60 @@
-import { CartService, TicketService } from '../../repository/index.js'
+import { CartService, TicketService } from '../repository/index.js'
 
 export const get = async (req, res) => {
-    const carts = await CartService.get()
-    res.json(carts)
+    try {
+        const carts = await CartService.get()
+        res.json(carts)
+    } catch (error) {
+        res.json(error)
+    }
 }
 
 export const create = async (req, res) => {
-    const newCart = await CartService.create()
-    res.json({status:'success', newCart})
+    try {
+        const newCart = await CartService.create()
+        res.json({status:'success', newCart})
+    } catch (error) {
+        res.json(error)
+    }
 }
 
 export const getOneByID = async (req, res) => {
-    const {cid} =  req.params;
-    const cart = await CartService.getOneByID(cid);
-    return res.json(cart)
+    try {
+        const {cid} =  req.params;
+        const cart = await CartService.getOneByID(cid);
+        return res.json(cart)
+    } catch (error) {
+        res.json(error)
+    }
 }
 
 export const addProduct = async (req, res) => {
-    const {cid} = req.params;
-    const {pid} = req.params;
-    const quantity = Number(req.body?.quantity) || 1;
+    try {
+        const {cid} = req.params;
+        const {pid} = req.params;
+        const quantity = Number(req.body?.quantity) || 1;
+        
+        const result = await CartService.addProduct(cid, pid, quantity);
     
-    const result = await CartService.addProduct(cid, pid, quantity);
-
-    if(!result) return res.status(404).json({status: 'error', error: 'Cart not found'})
-
-    res.send({status: 'success', result})
+        if(!result) return res.status(404).json({status: 'error', error: 'Cart not found'})
+    
+        res.send({status: 'success', result})
+    } catch (error) {
+        res.json(error)
+    }
 }
 
 export const update = async (req, res) => {
-    const newProducts= req.body;
-    const {cid} = req.params;
-    const cart = await CartService.update(cid, newProducts);
-
-    if(!cart) return res.status(404).json({status: 'error', error: 'Cart not found'});
-    res.json({status: 'success', cart})
+    try {
+        const newProducts= req.body;
+        const {cid} = req.params;
+        const cart = await CartService.update(cid, newProducts);
+    
+        if(!cart) return res.status(404).json({status: 'error', error: 'Cart not found'});
+        res.json({status: 'success', cart})
+    } catch (error) {
+        res.json(error)
+    }
 }
 
 export const updateProduct = async (req, res) => {

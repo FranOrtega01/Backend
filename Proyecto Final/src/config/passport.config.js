@@ -32,7 +32,7 @@ const initializePassport = () => {
 
             // Si existe return 
             if(user){
-                console.log('User already exists');
+                req.logger.error("User already exits");
                 return done(null, false) // (null) No hay ningun error pero, (false) el usuario ya existe.
             }
 
@@ -67,7 +67,7 @@ const initializePassport = () => {
             const user = await UserService.getOneByEmail(username)
 
             if(!user){
-                console.log('User doesnt exist');
+                req.logger.info("User doesnt exists");
                 return(null, user)
             }
     
@@ -81,7 +81,7 @@ const initializePassport = () => {
             return done(null, user)
             
         } catch (error) {
-            console.log(error);
+            req.logger.error(error)
         }
     }))
 
@@ -91,7 +91,6 @@ const initializePassport = () => {
         clientSecret: config.githubAppKey,
         callbackURL: 'http://127.0.0.1:8080/session/githubcallback'
     }, async (accesToken, refreshToken, profile, done) => {
-        console.log(profile);
 
         try {
             const user = await UserService.getOneByEmail( profile._json.email )
@@ -129,7 +128,6 @@ const initializePassport = () => {
         callbackURL: 'http://127.0.0.1:8080/session/googlecallback'
     }, async (issuer, profile, done) => {
         const { name, emails} = profile
-        console.log(profile);
         try {
             const user = await UserService.getOneByEmail(emails[0].value)
 

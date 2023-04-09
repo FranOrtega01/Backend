@@ -1,10 +1,10 @@
-import { MessageService } from "../../repository/index.js";
+import { MessageService } from '../repository/index.js'
 
 export const chat = async(req,res)=>{
     const messages = await MessageService.get();
 
     req.io.on('connection', socket => {
-        console.log('new cliente connected');
+        req.logger.info('New client connected');
     
         socket.on('messagein', async data => {
             await MessageService.create(data);

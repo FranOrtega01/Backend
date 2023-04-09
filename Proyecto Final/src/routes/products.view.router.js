@@ -1,6 +1,6 @@
 
 import { Router } from 'express'
-import { getPaginate, getOneByID, getRealTime } from '../DAO/controller/products.view.controller.js';
+import { getPaginate, getOneByID, getRealTime } from '../controller/products.view.controller.js';
 
 const router = Router()
 

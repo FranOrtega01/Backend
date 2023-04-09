@@ -1,0 +1,19 @@
+info: POST on /session/register - 19:48:45
+info: POST on /session/register - 19:48:45
+error: User already exits
+error: User already exits
+info: GET on /session/failRegister - 19:48:45
+info: GET on /session/failRegister - 19:48:45
+error: Strategy failed
+error: Strategy failed
+info: GET on /loggerTest - 19:49:01
+info: GET on /loggerTest - 19:49:01
+warning: just a warning
+warning: just a warning
+info: Se llamo a esta url
+error: Se cayo el server :(
+debug: 1 + 1 === 2 ????
+info: Se llamo a esta url
+error: Se cayo el server :(
+debug: 1 + 1 === 2 ????
+fatal: FATAL ERROR
