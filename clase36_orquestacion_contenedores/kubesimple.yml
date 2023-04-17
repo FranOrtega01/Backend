@@ -5,8 +5,8 @@ metadata:
 spec:
   selector:
     app: kubesimple
-  ports: 
-    - port: 8081
+  ports:
+    - port: 80
       targetPort: 8080
   type: LoadBalancer
 ---
@@ -16,7 +16,7 @@ metadata:
   name: kubeappsimples
 spec:
   replicas: 5
-  selector: 
+  selector:
     matchLabels:
       app: kubesimple
   template:
@@ -25,9 +25,8 @@ spec:
         app: kubesimple
     spec:
       containers:
-        - name: kubecontainer
-          image: franortega01/simpleapi:1.0.0
+        - name: kubecontainers
+          image: arturoverbel/simpleapi:1.0.0
           ports:
-            - cointainerPort: 8080
+            - containerPort: 8080
           imagePullPolicy: Always
-
