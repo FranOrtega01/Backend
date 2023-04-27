@@ -1,0 +1,114 @@
+paths:
+  /api/carts:
+  #Get all products
+    get:
+      summary: Trae todos los carts.
+      tags:
+        - Carts
+      responses:
+        "200":
+          description: Los carts fueron devueltos satisfactoriamente.
+          content: 
+            application/json:
+              schema: 
+                type: array
+                items:
+                  $ref: '#components/schemas/Carts'
+        "403": 
+          description: No autorizado.
+        "500": 
+          description: Error del servidor al traer los usuarios.
+    #POST
+    post:
+      summary: Crea un cart vacio.
+      tags:
+        - Carts
+      responses:
+        "200":
+          description: Se creo el cart satisfactoriamente.
+        "500": 
+          description: Error del servidor al crear un cart.
+
+  /api/carts/{cid}:
+    #Cart by id
+    get:
+      summary: Trae un cart por ID.
+      tags:
+        - Carts
+      responses:
+        "200":
+          description: Cart encontrado.
+          content: 
+            application/json:
+              schema: 
+                $ref: '#components/schemas/Carts'
+        "404": 
+          description: Cart no encontrado.
+      parameters:
+      - name: cid
+        in: path
+        required: true
+        description: ID del cart que se busca
+        schema:
+          $type: String
+      
+    #Update full cart by ID
+    put:
+      summary: Actualiza todo un cart por ID.
+      tags:
+        - Carts
+      parameters:
+      - name: cid
+        in: path
+        required: true
+        description: ID del cart que se quiere actualizar
+        schema:
+          $type: String
+      responses:
+        "200":
+          description: Cart actualizado.
+        "404": 
+          description: Cart no encontrado.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#components/requestBodies/updateCarts'
+
+components:
+  schemas:
+    Carts:
+      type: Array
+      properties:
+        _id:
+          type: ObjectId
+          description: ID autogenerada por MongoDB
+        products:
+          type: Array
+          items:
+            type: object
+            properties:
+              id:
+                type: ObjectId
+              quantity:
+                type: integer
+      example: 
+        _id: ObjectId('63dc51a16b2445f4af59c9fe')
+        products: [{id: ObjectId('63d1d8cf5e2435eb95e15ac5'),quantity: 7}]
+  # requestBodies:
+  #   updateCart:
+  #     type: object
+  #       properties:
+  #         _id:
+  #           type: ObjectId
+  #           description: ID autogenerada por MongoDB
+  #         products:
+  #           type: Array
+  #           items:
+  #             type: object
+  #             properties:
+  #               id:
+  #                 type: ObjectId
+  #               quantity:
+  #                 type: number

@@ -1,0 +1,186 @@
+paths:
+  /api/products:
+  #Get all products
+    get:
+      summary: Trae todos los productos.
+      tags:
+        - Products
+      responses:
+        "200":
+          description: Los productos fueron devueltos satisfactoriamente.
+          content: 
+            application/json:
+              schema: 
+                type: array
+                items:
+                  $ref: '#components/schemas/Products'
+        
+        "500": 
+          description: Error del servidor al traer los usuarios.
+    #POST
+    post:
+      summary: Crear nuevo producto.
+      tags:
+        - Products
+      responses:
+        "200":
+          description: Producto creado satisfactoriamente.
+        "403":
+          description: No autorizado.
+        "500":
+          description: Error del servidor al crear producto.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#components/requestBodies/updateProduct'
+  /api/products/{pid}:
+  #Get by ID
+    get:
+      summary: Trae un producto por ID.
+      tags:
+        - Products
+      responses:
+        "200":
+          description: Producto encontrado.
+          content: 
+            application/json:
+              schema: 
+                $ref: '#components/schemas/Products'
+        "404": 
+          description: Producto no encontrado.
+        "500":
+          description: Error del servidor al traer producto.
+      parameters:
+      - name: uid
+        in: path
+        required: true
+        description: ID del producto que se busca
+        schema:
+          $type: String
+    #PUT
+    put:
+      summary: Actualiza un products por ID.
+      tags:
+        - Products
+      parameters:
+      - name: uid
+        in: path
+        required: true
+        description: ID del producto que se busca
+        schema:
+          $type: String
+      responses:
+        "200":
+          description: Producto actualizado satisfactoriamente.
+        "403":
+          description: No autorizado.
+        "404": 
+          description: Producto no encontrado.
+        "500":
+          description: Error del servidor al actualizar producto.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#components/requestBodies/updateProduct'
+    #DELETE
+    delete:
+      summary: Elimina un products por ID.
+      tags:
+        - Products
+      parameters:
+      - name: uid
+        in: path
+        required: true
+        description: ID del producto que se quiere eliminar
+        schema:
+          $type: String
+      responses:
+        "200":
+          description: Producto eliminado satisfactoriamente.
+        "403":
+          description: No autorizado.
+        "404": 
+          description: Producto no encontrado.
+        "500":
+          description: Error del servidor al eliminar producto.
+components:
+  schemas:
+    Products:
+      type: object
+      properties:
+        _id:
+          type: ObjectId
+          description: ID autogenerada por MongoDB
+        title:
+          type: string
+          description: Nombre del producto
+        description:
+          type: string
+          description: Descripcion del producto
+        price:
+          type: number
+          description: Precio del producto
+        status:
+          type: boolean
+          description: Estado del producto
+        categoria:
+          type: string
+          description: Categoria del producto
+        code:
+          type: string
+          description: Codigo unico del producto
+        thumbnails:
+          type: Array
+          description: Fotos del producto
+        stock:
+          type: string
+          description: Stock del producto
+      example:
+        _id: ObjectId('63dc51a16b2445f4af59c9fe')
+        title: Coca Cola 1.5L NUEVA WEBSOCKETS
+        description: Bebida refrescante
+        price: 450
+        category: Bebidas
+        code: DFG-12367
+        thumbnails: ["URLimagen1", "URLimagen2", URLimagen3]
+        stock: 3
+  requestBodies:
+    updateProduct:
+      type: object
+      properties:
+        title:
+          type: string
+          description: Nombre del producto
+        description:
+          type: string
+          description: Descripcion del producto
+        price:
+          type: number
+          description: Precio del producto
+        status:
+          type: boolean
+          description: Estado del producto
+        categoria:
+          type: string
+          description: Categoria del producto
+        code:
+          type: string
+          description: Codigo unico del producto
+        thumbnails:
+          type: Array
+          description: Fotos del producto
+        stock:
+          type: string
+          description: Stock del producto
+      example:
+        title: Coca Cola 1.5L NUEVA WEBSOCKETS
+        description: Bebida refrescante
+        price: 450
+        category: Bebidas
+        code: DFG-12367
+        thumbnails: ["URLimagen1", "URLimagen2", URLimagen3]
+        stock: 3

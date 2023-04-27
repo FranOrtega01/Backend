@@ -37,11 +37,10 @@ const logger = winston.createLogger({
             level: 'http',
             format: winston.format.combine(winston.format.simple())
         }),
-        new winston.transports.Console({
-            filename: './errors.log',
-            level: 'info',
-            format: winston.format.combine(winston.format.simple())
-        }),
+        // new winston.transports.Console({
+        //     level: 'info',
+        //     format: winston.format.combine(winston.format.simple())
+        // }),
         new winston.transports.Console({
             filename: './errors.log',
             level: 'warning',
@@ -62,6 +61,6 @@ const logger = winston.createLogger({
 
 export const addLogger = (req, res, next) => {
     req.logger = logger;
-    req.logger.info(`${req.method} on ${req.url} - ${new Date().toLocaleTimeString()}`);
+    // req.logger.info(`${req.method} on ${req.url} - ${new Date().toLocaleTimeString()}`);
     next();
 }
