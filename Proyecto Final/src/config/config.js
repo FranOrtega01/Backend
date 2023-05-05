@@ -6,6 +6,7 @@ export default {
 
     mongoURI: process.env.MONGO_URI,
     mongoDBName: process.env.MONGO_DB_NAME,
+    mongoTestUri:process.env.TEST_MONGO_URI,
 
     jwtPrivateKey: process.env.JWT_PRIVATE_KEY,
     jwtCookieName: process.env.JWT_COOKIE_NAME,
@@ -17,6 +18,8 @@ export default {
     githubClientID: process.env.GITHUB_CLIENT_ID,
 
     adminEmail: process.env.ADMIN_EMAIL,
-    adminPass: process.env.ADMIN_PASSWORD
+    adminPass: process.env.ADMIN_PASSWORD,
 
+    gmailAppKey: process.env.GMAIL_APP_KEY,
+    gmailAppEmail: process.env.GMAIL_EMAIL
 }

@@ -1,7 +1,7 @@
 import { ProductService } from '../repository/index.js'
 
 export const getPaginate = async (req, res) => {
-    const limit = req.query?.limit || 10
+    const limit = req.query?.limit || 3
     const page = req.query?.page || 1
     const filter = req.query?.query || ''
     const sort = req.query.sort
@@ -28,11 +28,12 @@ export const getPaginate = async (req, res) => {
 
         const data = await ProductService.getPaginate(search, options)
     
-        data.prevLink = data.hasPrevPage ? `/api/products?page=${data.prevPage}` : null
-        data.nextLink = data.hasNextPage ? `/api/products?page=${data.nextPage}` : null
-    
-    
+        data.prevLink = data.hasPrevPage ? `/products?page=${data.prevPage}` : null
+        data.nextLink = data.hasNextPage ? `/products?page=${data.nextPage}` : null
+        
+        console.log("User: ", req.user.user);
         const user = req.user.user
+
         res.render('home', {data, user})
 
     } catch (error) {

@@ -2,11 +2,12 @@ import { Router } from "express";
 import passport from 'passport'
 const router = Router();
 import config from "../config/config.js";
+import UserDTO from "../DAO/DTO/users.dto.js";
+import { UserService } from '../repository/index.js'
+import { passportCall, authorization, transport} from '../utils.js';
+
 
 // View para register 
-
-
-
 router.get('/register', (req, res) => {
     res.render('sessions/register' , {title: 'Register'})
 })
@@ -26,6 +27,7 @@ router.get('/failRegister', (req, res) => {
 
 // View LogIn
 router.get('/login', (req, res) => {
+    console.log(req.user);
     res.render('sessions/login', {title: 'Login'})
 })
 
@@ -44,9 +46,14 @@ router.get('/failLogin', (req, res) => {
     res.send({error: 'Failed'})
 })
 
-router.get('/profile', (req, res) => {
-    req.logger.info(user)
-    res.render('sessions/profile', { user: req.user})
+router.get('/profile', passportCall('jwt'), authorization('user'), (req, res)=>{
+
+    //User sin password
+    const userDTO = new UserDTO(req.user.user).getCurrent()
+    console.log("User: ", userDTO);
+    res.render('sessions/profile', {
+        user: userDTO   
+    })
 })
 
 
@@ -67,28 +74,65 @@ router.get('/githubcallback',
         res.cookie(config.jwtCookieName, req.user.token).redirect('/products');
     })
     
-    // Login Google
-    
-    router.get('/google', 
-    passport.authenticate('google', 
-    {scope:['email', 'profile']}),
-    async(req, res) => {}
-    )
-    
-    router.get('/googlecallback',
-    passport.authenticate('google', {failureRedirect: '/login'}),
-    async(req, res) => {
-        req.logger.info('Callback', req.user)
+// Login Google
 
-        
-        req.session.user = req.user
-        res.cookie(config.jwtCookieName, req.user.token).redirect('/products');
-    }
+router.get('/google', 
+passport.authenticate('google', 
+{scope:['email', 'profile']}),
+async(req, res) => {}
+)
+
+router.get('/googlecallback',
+passport.authenticate('google', {failureRedirect: '/login'}),
+async(req, res) => {
+    req.logger.info('Callback', req.user)
+
     
-    )
-    export default router
+    req.session.user = req.user
+    res.cookie(config.jwtCookieName, req.user.token).redirect('/products');
+}
+
+)
+
+// LogOut
+router.get('/logout', (req, res) => {
+    res.clearCookie(config.jwtCookieName).redirect('/session/login')
+})
+
+
+
+//----------------------------------------------------------
+
+//Restore Password
+router.get('/password-reset', (req, res) => {
+    res.render('sessions/password-reset');
+})
+
+router.post('/password-reset', async (req, res) => {
+
+    const {email} = req.body;
+    const user = await UserService.getOneByEmail(email);
+
+    if(!user) return res.render('sessions/password-reset', { message: 'No encontramos ese usuario'})
     
-    // LogOut
-    router.get('/logout', (req, res) => {
-        res.clearCookie(config.jwtCookieName).redirect('/session/login')
+    const jwt = generateToken(user._id);
+
+    const result = await transport.sendMail({
+        from: config.gmailAppKey,
+        to: email,
+        subject: 'Password Reset',
+        html: `
+            <p>Haz click <a href="http://127.0.0.1:8080/session/restore/${jwt}" target="_blank">aquí </> para restablecer tu contraseña.</p>
+        `
     })
+})
+
+router.get('/password-reset/:jwt', validateTokenAndGetID, async(req, res) => {
+    const id = req.id;
+    const user = await UserService.getOne(id);
+    const token = req.params.jwt;
+    res.cookie('user', user).render('session/changepass');
+})
+
+
+    export default router

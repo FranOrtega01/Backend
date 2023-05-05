@@ -157,7 +157,7 @@ const initializePassport = () => {
     ))
 
     // Estrategia para current con JWT
-    passport.use('current', new JWTStrategy({
+    passport.use('jwt', new JWTStrategy({
         jwtFromRequest: JWTExtract.fromExtractors([extractCookie]),
         secretOrKey: config.jwtPrivateKey,
     }, async(jwt_payload, done)=>{

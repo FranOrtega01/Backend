@@ -7,31 +7,35 @@ const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
 import config from './config/config.js'
 import { faker } from '@faker-js/faker'
+import nodemailer from 'nodemailer'
 
 
 export default __dirname
 faker.locale = 'es'
 
-//Bcrcypt 
+// Bcrcypt hash
 export const createHash = password => {
     return bcrypt.hashSync(password, bcrypt.genSaltSync(10))
 }
 
+// Check if password is valid
 export const isValidPassword = (user, password) => {
     return bcrypt.compareSync(password, user.password)
 }
 
-//Cookies Token
+// Cookies Token Extract
 export const extractCookie = req => {
     return (req && req.cookies) ? req.cookies[config.jwtCookieName] : null
 }
 
-// JWT Token
+// JWT Token Generate
 export const generateToken = user => {
     const token = jwt.sign({user}, config.jwtPrivateKey , {expiresIn: '24h'} )
     return token
 }
 
+
+// Cookie Token Auth
 export const authToken = (req, res, next) => {
 
     let token = req.cookies[config.jwtCookieName]
@@ -44,29 +48,65 @@ export const authToken = (req, res, next) => {
         next()
     })
 }
+
+// Rol authorization
 export const authorization = (rol) => {
     return async (req, res, next) => {
-        const user = req.user?.user || req.user;
+        console.log("Auth: ",req.user);
+        const user = req.user?.user;
         if (!user) return res.status(401).send({ error: "Unauthorized" });
         if (user.rol != rol) return res.status(403).send({ error: 'No Permission' })
         next();
     }
 }
 
-//Passport
-export const passportCall = (strategy) => {
-    return async(req, res, next) => {
-        passport.authenticate(strategy, function(err, user, info){
-            if(err) return next(err)
-            if(!user){
-                return res.status(401).render('errors/base', {error: info.messages ? info.messages : info.toString()})
-            }
+// export const authorization = (aRole) => {
+//     return async (req, res, next) => {
+//         const user = req.user.user;
+//         if (!user) return res.status(401).send({ error: "Unauthorized" });
+//         if (aRole.includes(user.role)) return res.status(403).send({ error: 'No Permission' })
+//         next();
+//     }
+// }
 
-            req.user = user
-            next()
+// Passport
+export const passportCall = (strategy) => {
+    return async (req, res, next) => {
+        passport.authenticate(strategy, function (err, user, info) {
+            if (err) return next(err);
+            if (!user) {
+                return res.status(401).render('errors/base', { error: info.messages ? info.messages : info.toString() })
+            };
+            req.user = user;
+            next();
         })(req, res, next)
     }
 }
+
+
+// Transport Email (gmail)
+export const transport = nodemailer.createTransport({
+    service: 'gmail',
+    port: 587,
+    auth: {
+        user: config.gmailAppEmail,
+        pass: config.gmailAppKey,
+    }
+})
+
+
+// Validate JWT token for password reset
+export const validateTokenAndGetID = (req, res, next) => {
+    const token = req.params.jwt;
+    jwt.verify(token, config.jwtPrivateKey, (error, credentials) => {
+        if (error) return res.render('session/restore', { message: "token expired" })
+        req.id = credentials.user;
+        next();
+    })
+}
+
+
+// Mock Testing
 
 export const productsMock = (cant) =>{
     const products = [];

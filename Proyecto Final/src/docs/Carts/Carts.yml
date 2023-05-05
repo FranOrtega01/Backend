@@ -1,114 +1,205 @@
 paths:
   /api/carts:
-  #Get all products
     get:
-      summary: Trae todos los carts.
+      summary: Devuelve todos los carts en la base de datos.
       tags:
         - Carts
       responses:
         "200":
-          description: Los carts fueron devueltos satisfactoriamente.
+          description: Los carritos fueron devueltos satisfactoriamente
           content: 
             application/json:
-              schema: 
+              schema:
                 type: array
                 items:
-                  $ref: '#components/schemas/Carts'
-        "403": 
-          description: No autorizado.
-        "500": 
-          description: Error del servidor al traer los usuarios.
-    #POST
+                  $ref: '#components/schemas/Cart'
+        "500":
+          description: Error del servidor. 
     post:
-      summary: Crea un cart vacio.
+      summary: Crea un nuevo cart.
       tags:
         - Carts
-      responses:
-        "200":
-          description: Se creo el cart satisfactoriamente.
-        "500": 
-          description: Error del servidor al crear un cart.
-
-  /api/carts/{cid}:
-    #Cart by id
-    get:
-      summary: Trae un cart por ID.
-      tags:
-        - Carts
-      responses:
-        "200":
-          description: Cart encontrado.
-          content: 
-            application/json:
-              schema: 
-                $ref: '#components/schemas/Carts'
-        "404": 
-          description: Cart no encontrado.
-      parameters:
-      - name: cid
-        in: path
-        required: true
-        description: ID del cart que se busca
-        schema:
-          $type: String
-      
-    #Update full cart by ID
-    put:
-      summary: Actualiza todo un cart por ID.
-      tags:
-        - Carts
-      parameters:
-      - name: cid
-        in: path
-        required: true
-        description: ID del cart que se quiere actualizar
-        schema:
-          $type: String
-      responses:
-        "200":
-          description: Cart actualizado.
-        "404": 
-          description: Cart no encontrado.
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#components/requestBodies/updateCarts'
-
+              $ref: '#components/requestBodies/CartInput'
+      responses:
+        "200":
+          description: Cart creado exitosamente
+          schema:
+            $ref: '#components/schemas/Cart'
+        "500":
+          description: Error en el servidor
+        "401":
+          description: No autorizado
+  /api/carts/{cid}:
+    get:
+      summary: Devuelve el cart de la base de datos que coincida con el Id suministrado.
+      tags:
+        - Carts
+      parameters:
+      - name: cid
+        in: path
+        required: true
+        decription: ID del cart que se busca
+        schema:
+          $type: String
+      responses:
+        "200":
+          description: Cart encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#components/schemas/Cart'
+        "404":
+          description: Cart no encontrado
+        "500":
+          description: Error en el servidor
+    put:
+      summary: Reemplaza todos los productos del cart id suministrado por parametro.
+      tags:
+        - Carts
+      parameters:
+      - name: cid
+        in: path
+        required: true
+        decription: ID del cart a actualizar
+        schema:
+          $type: String
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#components/requestBodies/CartInput'
+      responses:
+        "200":
+          description: Cart actualizado con exito
+          schema:
+            $ref: '#components/schemas/Cart'
+        "404":
+          description: Cart no encontrado
+        "500":
+          description: Error en el servidor
+        "401":
+          description: No autorizado
+    delete:
+      summary: Elimina el cart del id suministrado por parametro.
+      tags:
+        - Carts
+      parameters:
+        - name: cid
+          in: path
+          description: ID del cart a eliminar
+          required: true
+          type: string
+      responses:
+        "200":
+          description: Cart eliminado con éxito
+        "401":
+          description: No autorizado
+        "404":
+          description: Cart no encontrado
+        "500":
+          description: Error en el servidor
+  /api/carts/{cid}/products/{pid}:
+    post:
+      summary: Agrega al cart definido por el cid el producto definido por el pid.
+      tags:
+        - Carts
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: cid
+          schema:
+            type: string
+          required: true
+          description: ID del cart al que agregar el producto.
+        - in: path
+          name: pid
+          schema:
+            type: string
+          required: true
+          description: El id del producto a agregar al cart
+      responses:
+        '200':
+          description: El cart se ha actualizado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Cart'
+        '404':
+          description: No se encontró el cart o el producto
+        '401':
+          description: No Autorizado
+  
+  /api/carts/{cid}/purchase:
+    post:
+      summary: Procesa la compra del cart definido en el cid y emite un ticket
+      tags: 
+        - Carts
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: cid
+          schema:
+            type: string
+          required: true
+          description: El id del cart a comprar
+      responses:
+        '200':
+          description: El cart se ha comprado con exito
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Cart'
+        '404':
+          description: No se encontró el cart o el producto
+        '401':
+          description: No Autorizado
 components:
   schemas:
-    Carts:
-      type: Array
+    Cart:
+      type: object
       properties:
         _id:
           type: ObjectId
-          description: ID autogenerada por MongoDB
+          description: ID auto generado by mongo
         products:
           type: Array
+          description: Lista de productos
           items:
             type: object
             properties:
-              id:
-                type: ObjectId
+              product:
+                type: String
               quantity:
-                type: integer
-      example: 
-        _id: ObjectId('63dc51a16b2445f4af59c9fe')
-        products: [{id: ObjectId('63d1d8cf5e2435eb95e15ac5'),quantity: 7}]
-  # requestBodies:
-  #   updateCart:
-  #     type: object
-  #       properties:
-  #         _id:
-  #           type: ObjectId
-  #           description: ID autogenerada por MongoDB
-  #         products:
-  #           type: Array
-  #           items:
-  #             type: object
-  #             properties:
-  #               id:
-  #                 type: ObjectId
-  #               quantity:
-  #                 type: number
+                type: Number
+      example:
+        _id: ObjectId("64467ae3c5233f66c176f530")
+        products: 
+          - {"product": "63cef84992e9f46663931ee6" ,"quantity": 1} 
+          - {"product": "63d3ee9aebf5066d8c8ba619" ,"quantity": 3}
+  requestBodies:
+    CartInput:
+      type: object
+      properties:
+        products:
+          type: Array
+          description: Lista de productos
+          items:
+            type: object
+            properties:
+              product:
+                type: String
+              quantity:
+                type: Number
+      example:
+        _id: ObjectId("64467ae3c5233f66c176f530")
+        products: 
+          - {"product": "63cef84992e9f46663931ee6" ,"quantity": 1} 
+          - {"product": "63d3ee9aebf5066d8c8ba619" ,"quantity": 3}
