@@ -4,7 +4,7 @@ const router = Router();
 import config from "../config/config.js";
 import UserDTO from "../DAO/DTO/users.dto.js";
 import { UserService } from '../repository/index.js'
-import { passportCall, authorization, transport} from '../utils.js';
+import { passportCall, authorization,generateToken, transport,isValidPassword, createHash, validateTokenAndGetID, passwordFormatIsValid} from '../utils.js';
 
 
 // View para register 
@@ -104,35 +104,77 @@ router.get('/logout', (req, res) => {
 //----------------------------------------------------------
 
 //Restore Password
-router.get('/password-reset', (req, res) => {
-    res.render('sessions/password-reset');
+router.get('/restore-account', (req, res) => {
+    res.render('sessions/restore-account');
 })
 
-router.post('/password-reset', async (req, res) => {
+// /restore-account handle jwt token & gmail transport
+router.post('/restore-account', async (req, res) => {
 
     const {email} = req.body;
     const user = await UserService.getOneByEmail(email);
 
-    if(!user) return res.render('sessions/password-reset', { message: 'No encontramos ese usuario'})
+    if(!user) return res.render('sessions/restore-account', { message: 'No encontramos ese usuario'})
     
-    const jwt = generateToken(user._id);
+    try {
+        const jwt = generateToken(user._id , "24h");
+    
+        const result = await transport.sendMail({
+            from: config.gmailAppEmail,
+            to: email,
+            subject: 'Password Reset',
+            html: `
+                <p>Haz click<a href="http://127.0.0.1:8080/session/restore-account/password-reset/${jwt}" target="_blank"> aquí </a>para restablecer tu contraseña.</p>
+            `
+        })
+        
+        return res.render('sessions/restore-account', { message: 'Email enviado! Por favor, revisa el spam en tu correo'})
 
-    const result = await transport.sendMail({
-        from: config.gmailAppKey,
-        to: email,
-        subject: 'Password Reset',
-        html: `
-            <p>Haz click <a href="http://127.0.0.1:8080/session/restore/${jwt}" target="_blank">aquí </> para restablecer tu contraseña.</p>
-        `
-    })
+    } catch (error) {
+        console.log(error);
+        return res.render('sessions/restore-account', { message: 'Hubo un error, por favor intentalo de nuevo en unos momentos'})
+    }
 })
 
-router.get('/password-reset/:jwt', validateTokenAndGetID, async(req, res) => {
+// /password-reset
+// Validate token (Middleware) validates the jwt token in params
+router.get('/restore-account/password-reset/:jwt', validateTokenAndGetID, async(req, res) => {
+    //ID in token from ValidateToken
+    const { jwt } = req.params
     const id = req.id;
-    const user = await UserService.getOne(id);
-    const token = req.params.jwt;
-    res.cookie('user', user).render('session/changepass');
+    const user = await UserService.getOneByID(id);
+    console.log(user);
+
+    res.cookie('resetToken', id)
+    res.cookie('user', user).render('sessions/password-reset');
 })
+
+// /restore-account/password-reset checks password format & updates user psw
+router.post('/restore-account/password-reset', async(req, res) => {
+    const id = req.cookies['resetToken']
+
+    const password = req.body?.data;
+    if(!password) return res.send({status: 'error', data: 'La contraseña no puede ser vacía'});
+    
+    // Handle errors - Render errors in password format
+    const message = passwordFormatIsValid(password);
+    if(Object.keys(message).length != 0) return  res.send({status: 'error', data: Object.values(message).join(' ')});
+    
+    // Check if password is the same
+    const user = await UserService.getOneByID(id);
+    const repitedPassword = isValidPassword(user, password);
+    
+    if(repitedPassword) return res.send({status: 'error', data: 'La contraseña no puede ser la misma'});
+    
+    // Change new hashed password 
+    const hashedPassword = createHash(password);
+    user.password = hashedPassword
+    console.log("New user: ",user);
+    const result = await UserService.update(user._id, user);
+    
+    return res.send({status: "success"})
+});
+
 
 
     export default router

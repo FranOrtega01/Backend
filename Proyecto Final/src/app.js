@@ -16,12 +16,16 @@ import errorHandler from './errorHandler/errors.js'
 import swaggerJSDoc from 'swagger-jsdoc';
 import swaggerUiExpress from 'swagger-ui-express'
 
+import cors from 'cors'
 
 // Init Servers
 const app = express()
 app.use(express.json())
 app.use(express.urlencoded({extended: true}))
 app.use(cookieParser())
+
+app.use(cors())
+
 app.use(addLogger)
 app.use(errorHandler)
 

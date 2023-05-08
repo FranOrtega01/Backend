@@ -76,7 +76,7 @@ const initializePassport = () => {
 
             // jwt Token
 
-            const token = generateToken(user);
+            const token = generateToken(user, '24h');
             user.token = token
             return done(null, user)
             
@@ -96,7 +96,7 @@ const initializePassport = () => {
             const user = await UserService.getOneByEmail( profile._json.email )
 
             if (user) {
-                const token = generateToken(user);
+                const token = generateToken(user, "24h");
                 user.token = token;
                 return done(null, user)
             };
@@ -111,7 +111,7 @@ const initializePassport = () => {
                 rol: 'user'
             })
 
-            const token = generateToken(newUser);
+            const token = generateToken(newUser, "24h");
             newUser.token = token;
 
             return done(null, newUser);
@@ -132,7 +132,7 @@ const initializePassport = () => {
             const user = await UserService.getOneByEmail(emails[0].value)
 
             if(user){
-                const token = generateToken(user);
+                const token = generateToken(user, "24h");
                 user.token = token;
                 return done(null, user)
             }
@@ -146,7 +146,7 @@ const initializePassport = () => {
                 rol:'user'
             })
 
-            const token = generateToken(user);
+            const token = generateToken(user, "24h");
             newUser.token = token;
             return done(null, newUser)
 

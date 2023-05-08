@@ -27,3 +27,11 @@ info: Callback {"__v":0,"_id":"6452ec96a870d0c091a935b9","cart":{"_id":"6452ec96
 info: Callback {"__v":0,"_id":"6452ec96a870d0c091a935b9","cart":{"_id":"6452ec96a870d0c091a935b7"},"email":"franortega.wg@gmail.com","first_name":"Fran","last_name":"","password":"","rol":"user","token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7Il9pZCI6IjY0NTJlYzk2YTg3MGQwYzA5MWE5MzViOSIsImZpcnN0X25hbWUiOiJGcmFuIiwibGFzdF9uYW1lIjoiIiwiZW1haWwiOiJmcmFub3J0ZWdhLndnQGdtYWlsLmNvbSIsInBhc3N3b3JkIjoiIiwicm9sIjoidXNlciIsImNhcnQiOnsiX2lkIjoiNjQ1MmVjOTZhODcwZDBjMDkxYTkzNWI3In0sIl9fdiI6MH0sImlhdCI6MTY4MzE1NjUyNywiZXhwIjoxNjgzMjQyOTI3fQ.uxfFaINbTN2Acmfv_CiYQnNCHAvoM_4ab8jRvpU0aYw"}
 error: Strategy failed
 error: Strategy failed
+error: Strategy failed
+error: Strategy failed
+error: User already exits
+error: User already exits
+error: Strategy failed
+error: Strategy failed
+error: Strategy failed
+error: Strategy failed

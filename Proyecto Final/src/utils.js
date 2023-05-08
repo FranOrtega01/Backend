@@ -29,8 +29,8 @@ export const extractCookie = req => {
 }
 
 // JWT Token Generate
-export const generateToken = user => {
-    const token = jwt.sign({user}, config.jwtPrivateKey , {expiresIn: '24h'} )
+export const generateToken = (user, time) => {
+    const token = jwt.sign({user}, config.jwtPrivateKey , {expiresIn: time} )
     return token
 }
 
@@ -99,12 +99,23 @@ export const transport = nodemailer.createTransport({
 export const validateTokenAndGetID = (req, res, next) => {
     const token = req.params.jwt;
     jwt.verify(token, config.jwtPrivateKey, (error, credentials) => {
-        if (error) return res.render('session/restore', { message: "token expired" })
+        if(error) console.log(error);
+        if (error) return res.render('sessions/password-reset', { message: "token expired" })
+        //ID in token
         req.id = credentials.user;
         next();
     })
 }
 
+export const passwordFormatIsValid = (password)=>{
+    const message = {};
+    if(password.length < 8) message.large = "Debe tener como mínimo 8 caracteres.";
+    if(!(/[A-Z]/.test(password))) message.mayus = "Debe contener al menos una mayúscula.";
+    if(!(/[0-9]/.test(password))) message.number = "Debe contener algún número.";
+
+    return message;
+
+}
 
 // Mock Testing
 
