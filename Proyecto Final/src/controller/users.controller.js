@@ -64,3 +64,16 @@ export const deleteOne = async (req, res) => {
     }
 }
 
+// Api Users
+
+export const upgrade = async (req, res) => {
+    const { uid } = req.params;
+    try {
+        const updateRol = {rol:'premium'}
+        const updatedUser = await UserService.update(uid, updateRol )
+        res.json({status:'success', updatedUser})
+    } catch (error) {
+        res.json({status:'error', error})
+    }
+}
+

@@ -13,14 +13,13 @@ router.get('/getAll', get)
 router.get("/:pid", getOneByID)
 
 // Crear productos
-// router.post('/', authorization('admin'), create)
-router.post('/', create)
+router.post('/', authorization(['premium', 'admin']), create)
 
 
 // Update por id
-router.put("/:pid" ,update)
+router.put("/:pid", authorization(['premium', 'admin']) ,update)
 
 // Eliminar por id
-router.delete('/:pid',  authorization('admin'),deleteOne)
+router.delete('/:pid',  authorization(['premium', 'admin']),deleteOne)
 
 export default router

@@ -4,6 +4,7 @@ import chatRouter from './routes/chat.router.js'
 import productViewRouter from './routes/products.view.router.js'
 import cartViewRouter from './routes/cart.view.router.js'
 import sessionRouter from './routes/session.router.js'
+import userRouter from './routes/user.router.js'
 import mockingRouter from './routes/mocking.router.js'
 import loggerTest from "./routes/logger.router.js"
 import { passportCall } from "./utils.js";
@@ -24,6 +25,7 @@ const socket = (io, app) => {
     app.use('/cart', passportCall('jwt'), cartViewRouter )
     app.use('/api/products',passportCall('jwt'), productRouter)
     app.use('/api/carts',passportCall('jwt'), cartRouter)
+    app.use('/api/users',passportCall('jwt'), userRouter)
     app.use('/chat', passportCall('jwt'), chatRouter)
     app.use('/session', sessionRouter) 
     app.use('/mockingproducts', mockingRouter)

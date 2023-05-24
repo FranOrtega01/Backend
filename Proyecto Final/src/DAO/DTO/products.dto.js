@@ -9,6 +9,7 @@ export default class ProductDTO{
         this.category = product.category || ''
         this.code = product.code || 0
         this.thumbnails = product.thumbnails || []
-        this.stock = product.stock || 0
+        this.stock = product.stock || 0,
+        this.owner = product.owner;
     }
 }

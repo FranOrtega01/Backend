@@ -49,8 +49,7 @@ export default class UserRepository{
 
     update = async (id, user) => {
         try {
-            const userToInsert = new userDTO(user);
-            const result = await this.dao.update(id, userToInsert);
+            const result = await this.dao.update(id, user);
             return result;
         } catch (error) {
             return console.log(error);

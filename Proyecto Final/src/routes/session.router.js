@@ -46,7 +46,7 @@ router.get('/failLogin', (req, res) => {
     res.send({error: 'Failed'})
 })
 
-router.get('/profile', passportCall('jwt'), authorization('user'), (req, res)=>{
+router.get('/profile', passportCall('jwt'), authorization(['user', 'premium', 'admin']), (req, res)=>{
 
     //User sin password
     const userDTO = new UserDTO(req.user.user).getCurrent()
@@ -177,4 +177,4 @@ router.post('/restore-account/password-reset', async(req, res) => {
 
 
 
-    export default router
+export default router

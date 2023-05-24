@@ -32,7 +32,6 @@ const initializePassport = () => {
 
             // Si existe return 
             if(user){
-                req.logger.error("User already exits");
                 return done(null, false) // (null) No hay ningun error pero, (false) el usuario ya existe.
             }
 
@@ -67,7 +66,6 @@ const initializePassport = () => {
             const user = await UserService.getOneByEmail(username)
 
             if(!user){
-                req.logger.info("User doesnt exists");
                 return(null, user)
             }
     

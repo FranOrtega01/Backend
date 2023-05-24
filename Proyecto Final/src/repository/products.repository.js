@@ -21,6 +21,7 @@ export default class ProductRepository{
     }
 
     create = async (data) => {
+        console.log("DATA POSTMAN: ", data);
         try {
             const dataToInsert = new ProductDTO(data)
             return await this.dao.create(dataToInsert)
@@ -42,17 +43,33 @@ export default class ProductRepository{
         }
     }
 
-    update = async (id, productToUpdate) => {
+    // Update product by owner
+    update = async (id, productToUpdate, user) => {
         try {
-            const prodToUpdate = new ProductDTO(productToUpdate);
-            const result = await this.dao.update(id, prodToUpdate);
-            return result;
+            //
+            if(productToUpdate.owner.rol == owner.rol || user.rol == 'admin'){
+                if(productToUpdate.owner.id != user._id) return;
+
+                const prodToUpdate = new ProductDTO(productToUpdate);
+                return await this.dao.update(id, prodToUpdate);  
+            }
         } catch (error) {
-            throw new Error('Product not found');
+            throw new Error('Product not found or unauthorized');
         }
     }
 
-    deleteOne = async ( pid ) => {
-        return await this.dao.deleteOne(pid)
+
+    deleteOne = async(pid, user) => {
+        try {
+            const prod = await this.getOneByID(pid);
+            // If owners rol == prod.owner.rol (Premium) or admin
+            if(prod.owner.rol == user.rol || user.rol == 'admin'){
+                //If owners id != prod.owners id
+                if(prod.owner.id != user._id) return;
+                return await this.dao.delete(pid);
+            }
+        } catch (error) {
+            throw new Error('An error ocurred deleting a product');
+        }
     }
 }

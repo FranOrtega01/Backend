@@ -34,6 +34,7 @@ export default class cartRepository{
 
     addProduct = async (cid, pid, qty) => {
         try {
+            
             const result = await this.dao.addProduct(cid,pid, qty);
             return result;
         } catch (error) {

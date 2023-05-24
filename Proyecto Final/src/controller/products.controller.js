@@ -62,6 +62,13 @@ export const getPaginate = async (req, res) => {
 export const create = async( req, res ) => {
     try {
         const product = req.body
+        const user = req.user.user;
+        console.log("user: ",user);
+        console.log("body: ", product);
+        product.owner = {
+            rol: user.rol,
+            id: user._id
+        }
         const newProduct = await ProductService.create(product)
         req.io.emit('updatedProducts', await ProductService.get())
 
@@ -71,6 +78,7 @@ export const create = async( req, res ) => {
         })
 
     } catch (error) {
+        console.log(error);
         res.json({
             error
         })
@@ -112,8 +120,9 @@ export const update = async(req, res) => {
 }
 export const deleteOne = async (req, res) => {
     const { pid } = req.params
+    const user = req.user?.user
 
-    const deleted = await ProductService.deleteOne(pid)
+    const deleted = await ProductService.deleteOne(pid, user)
     
     //Update realTime
     req.io.emit('updatedProducts', await ProductService.get())

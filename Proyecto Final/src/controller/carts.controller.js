@@ -1,4 +1,4 @@
-import { CartService, TicketService } from '../repository/index.js'
+import { CartService, TicketService, ProductService } from '../repository/index.js'
 
 export const get = async (req, res) => {
     try {
@@ -30,9 +30,17 @@ export const getOneByID = async (req, res) => {
 
 export const addProduct = async (req, res) => {
     try {
+        const user = req.user?.user
         const {cid} = req.params;
         const {pid} = req.params;
         const quantity = Number(req.body?.quantity) || 1;
+        
+        // Premium cant add own product
+        const product = await ProductService.getOneByID(pid)
+        console.log(product);
+        console.log(user._id);
+        if(product.owner.id == user._id) return res.status(400).json({status: 'error', error: 'Cant add own product'})
+
         
         const result = await CartService.addProduct(cid, pid, quantity);
     
@@ -40,6 +48,7 @@ export const addProduct = async (req, res) => {
     
         res.send({status: 'success', result})
     } catch (error) {
+        console.log('ERROR: ', error);
         res.json(error)
     }
 }

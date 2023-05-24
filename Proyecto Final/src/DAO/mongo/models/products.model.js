@@ -11,10 +11,20 @@ const productSchema = new mongoose.Schema({
     category: String,
     code: {
         type:String,
-        // unique: true
+        unique: true
     },
     thumbnails: Array,
-    stock: Number
+    stock: Number,
+    owner:{
+        rol:{
+            type: String,
+            default: 'admin'
+        },
+        id:{
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'users'
+        }
+    }
 })
 
 productSchema.plugin(mongoosePaginate)

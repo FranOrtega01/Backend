@@ -4,6 +4,6 @@ import { authorization } from '../utils.js';
 
 const router = Router();
 
-router.get('/',authorization('user'), chat);
+router.get('/', chat);
 
 export default router;
