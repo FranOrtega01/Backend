@@ -18,19 +18,18 @@ const socket = (io, app) => {
 
     // Config de rutas
     app.get('/', (req, res) => {
-        req.session.user ? res.redirect('/products') : res.redirect('/session/login')
+        req.user ? res.redirect('/products') : res.redirect('/session/login')
     })
 
     app.use('/products', passportCall('jwt') , productViewRouter)
     app.use('/cart', passportCall('jwt'), cartViewRouter )
     app.use('/api/products',passportCall('jwt'), productRouter)
     app.use('/api/carts',passportCall('jwt'), cartRouter)
-    app.use('/api/users',passportCall('jwt'), userRouter)
+    app.use('/api/users', passportCall('jwt'), userRouter)
     app.use('/chat', passportCall('jwt'), chatRouter)
     app.use('/session', sessionRouter) 
     app.use('/mockingproducts', mockingRouter)
     app.use("/loggerTest", loggerTest)
-    
 }
 
 

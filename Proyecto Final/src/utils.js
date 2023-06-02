@@ -50,19 +50,11 @@ export const authToken = (req, res, next) => {
 }
 
 // Rol authorization
-// export const authorization = (rol) => {
-//     return async (req, res, next) => {
-//         console.log("Auth: ",req.user);
-//         const user = req.user?.user;
-//         if (!user) return res.status(401).send({ error: "Unauthorized" });
-//         if (user.rol != rol) return res.status(403).send({ error: 'No Permission' })
-//         next();
-//     }
-// }
 
 export const authorization = (rol) => {
     return async (req, res, next) => {
         const user = req.user?.user;
+        console.log("ROL: ", user?.rol);
         if (!user) return res.status(401).send({status:'error', error: "Unauthorized" });
         if (!rol.includes(user.rol)) return res.status(403).send({status:'error', error: 'No Permission' })
         next();

@@ -63,4 +63,28 @@ export default class UserRepository{
             return console.log(error)
         }
     }
+
+    deleteMany = async(cond) => {
+        try {
+            return await this.dao.deleteMany(cond)
+        } catch (error) {
+            return console.log(error);
+        }
+    }
+
+    addDocs = async (id, docName, path)=>{
+        try {
+            const user = await this.dao.getOneByID(id);
+            const idx = user.documents.findIndex( doc => doc.name == docName);
+            console.log('DOC NAME: ', docName);
+            if(idx != -1) {
+                console.log('UPDATED');
+                return await this.dao.updateDoc(id, idx, docName, path);
+            }else{
+                return await this.dao.addDoc(id, docName, path);
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    }
 }

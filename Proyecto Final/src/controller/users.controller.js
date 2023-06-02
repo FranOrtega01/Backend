@@ -64,6 +64,7 @@ export const deleteOne = async (req, res) => {
     }
 }
 
+
 // Api Users
 
 export const upgrade = async (req, res) => {
@@ -77,3 +78,16 @@ export const upgrade = async (req, res) => {
     }
 }
 
+export const deleteLastConnecition = async (req, res) => {
+    try {
+        // 172800000 = 2 days
+        const conditions = {
+            last_connection: { $gt: 60000 },
+            rol: { $ne: 'admin' }
+        };
+        const deletedUsers = await UserService.deleteMany(conditions)
+        res.json({status:'success', deletedUsers})
+    } catch (error) {
+        res.json({status:'error', error})
+    }
+}
