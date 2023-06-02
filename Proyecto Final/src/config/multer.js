@@ -10,16 +10,14 @@ const storage = multer.diskStorage({
             if (file.originalname.includes('product')) {
                 cb(null, 'files/products');
             }
-        } else {
-            if (file.originalname.includes('.pdf')) {
-                cb(null, 'files/documents');
-            }
+        } else if (file.originalname.includes('.pdf')) {
+            cb(null, 'files/documents');
         }
     },
     filename: async (req, file, cb) => {
         const uid = req.params.uid;
 
-        if (!file.originalname.includes('.pdf')) return
+        if (!file.originalname.includes('.pdf')) return cb(null, `${Date.now()}-${uid}-${file.originalname}`);
 
         if (file.originalname.includes('Identificacion')) {
             const docName = `${Date.now()}-${uid}-${file.originalname}`;
@@ -46,7 +44,7 @@ const storage = multer.diskStorage({
 });
 
 function fileFilter(req, file, cb){
-    // Comprueba si se desea procesar el archivo
+    // Checks if file name is accepted
 
     if (!file.originalname.includes('.pdf') && !file.originalname.includes('.png')) return cb(null, false);
     
@@ -65,4 +63,4 @@ function fileFilter(req, file, cb){
 
 const upl = multer({ storage: storage, fileFilter });
 
-export const upload = upl.single('file');
+export const upload = upl.array("myFiles", 5);

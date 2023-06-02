@@ -20,9 +20,7 @@ export default class User{
     }
 
     update = async(id, updUser)=>{
-        console.log(updUser);
         const result = await UserModel.updateOne({_id: id}, {$set:updUser});
-        console.log(result);
         return result;
     }
 

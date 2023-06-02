@@ -1,0 +1,14 @@
+<div>
+  <form
+    action="/api/users/{{user._id}}/documents"
+    method="post"
+    enctype="multipart/form-data"
+  >
+    <p>Subir los archivos con el nombre correspindiente: identificacion,
+      comprobante de domocilio, comprobante de estado de cuenta</p>
+    <input type="file" name="myFiles" multiple />
+    <button type="submit">Subir documentos</button>
+
+  </form>
+  <a href="/session/profile">Volver a Mi Perfil</a>
+</div>

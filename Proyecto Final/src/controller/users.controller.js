@@ -67,22 +67,28 @@ export const deleteOne = async (req, res) => {
 
 // Api Users
 
-export const upgrade = async (req, res) => {
+export const rolUpgrade = async (req, res) => {
     const { uid } = req.params;
     try {
-        const updateRol = {rol:'premium'}
-        const updatedUser = await UserService.update(uid, updateRol )
-        res.json({status:'success', updatedUser})
+        const user = await UserService.getOneByID(uid);
+        if (!user) return res.status(404).send({status:'error', error: "User not found"})
+        if (user.rol == "admin") res.status(400).send({status:'error', error: "User is admin"})
+        user.rol = user.rol == "user" ? "premium" : "user";
+        const newUser = await UserService.update(uid, user);
+        console.log(newUser, user.rol);
+        return res.status(200).send({status: 'success', message:'User rol changed'})
     } catch (error) {
-        res.json({status:'error', error})
+        return console.log(error);
     }
+
+
 }
 
 export const deleteLastConnecition = async (req, res) => {
     try {
         // 172800000 = 2 days
         const conditions = {
-            last_connection: { $gt: 60000 },
+            last_connection: { $gt: 172800000 },
             rol: { $ne: 'admin' }
         };
         const deletedUsers = await UserService.deleteMany(conditions)

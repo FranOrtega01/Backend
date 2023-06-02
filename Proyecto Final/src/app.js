@@ -2,7 +2,7 @@ import express from 'express'
 import handlebars from 'express-handlebars'
 import cookieParser from 'cookie-parser'
 
-import { Server }  from 'socket.io'
+import { Server } from 'socket.io'
 import socket from './socket.js';
 import __dirname from './utils.js';
 
@@ -21,7 +21,7 @@ import cors from 'cors'
 // Init Servers
 const app = express()
 app.use(express.json())
-app.use(express.urlencoded({extended: true}))
+app.use(express.urlencoded({ extended: true }))
 app.use(cookieParser())
 
 app.use(cors())
@@ -36,6 +36,12 @@ app.engine('handlebars', handlebars.engine())
 app.set('views', __dirname + '/views')
 app.set('view engine', 'handlebars')
 
+// Registrar el helper 'eq'
+const { handlebars: hbs } = handlebars.create();
+hbs.registerHelper('eq', function (a, b) {
+    return a === b;
+});
+
 
 app.use(express.json())
 app.use(express.static(__dirname + '/public'))
@@ -43,9 +49,9 @@ app.use(express.static(__dirname + '/public'))
 // Swagger config
 
 const swaggerOptions = {
-    definition:{
+    definition: {
         openapi: '3.0.1',
-        info:{
+        info: {
             title: 'Proyecto Backend Coderhouse',
             description: 'Template de un ecommerce utilizando Express y MongoDB'
         }
